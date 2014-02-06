@@ -1,7 +1,54 @@
 #!/usr/bin/python3
 import os, importlib, sys, fnmatch, subprocess
 
-# Returns a list of full path names, like the unix 'find' command
+def main():
+
+    print("""
+     _____                  _         _    _                                                _    
+    / ____|                | |       | |  | |                                              | |   
+   | |  __  _ __  __ _   __| |  ___  | |__| |  ___   _ __ ___    ___ __      __ ___   _ __ | | __
+   | | |_ || '__|/ _` | / _` | / _ \ |  __  | / _ \ | '_ ` _ \  / _ \\ \ /\ / // _ \ | '__|| |/ /
+   | |__| || |  | (_| || (_| ||  __/ | |  | || (_) || | | | | ||  __/ \ V  V /| (_) || |   |   < 
+    \_____||_|   \__,_| \__,_| \___| |_|  |_| \___/ |_| |_| |_| \___|  \_/\_/  \___/ |_|   |_|\_\
+                                                                                                 
+    """)
+    print("Please enter one or more UNIX file name patterns to identify the scripts which need grading. Separate patterns with a comma.")
+    patterns = str(input("> ")).replace(' ','').split(',')
+
+    print("Please enter paths to all testing scripts you would like to run against the homework, separated by commas.")
+    tests = str(input("> ")).replace(' ','').split(',')
+
+    student_files = []
+    for pattern in patterns:
+        files = find(pattern,'.')
+        for f in files:
+            if f not in student_files:
+                student_files.append(f)
+
+    # TODO: Add something to not count MAC zip folders
+
+    # For each homework file, grade it
+    for file in student_files:
+        not_skipped = gradeHomework(file,tests)
+        if not_skipped:
+            if student_files.index(file) != len(student_files)-1:
+                cont = str(input("Grade another? "))
+                if cont.lower() != 'y':
+                    break
+            else:
+                print("No more homework to grade.\n")
+
+    consolidate = str(input("Would you like to consolidate all grade files now? "))
+    if consolidate.lower() == 'y':
+        valid_file = False
+        while not valid_file:
+            f_name = str(input("Save as: "))
+            valid_file = consolidateGrades(f_name)
+
+    print("Grading session complete.")
+
+# Walks the directory and returns a list of full path names, 
+# like the unix 'find' command
 def find(pattern, directory):
     matches = []
     for root, dirs, files in os.walk(directory):
@@ -29,12 +76,16 @@ def callFunction(foo, mod):
     method = getattr(mod,foo)
     return method()
 
+def callTest(test_path, student_module):
+    test = open(test_path).read()
+    exec(test)
+
 # Grade a students homework
-def gradeHomework(file_path,functions):
+def gradeHomework(file_path,tests):
     mod_load_msg = '''
----------------------------------------------
-Loading module and calling supplied functions
----------------------------------------------
+-----------------------------------------
+Loading module and calling supplied tests
+-----------------------------------------
 ----Output----
 '''
     file_load_msg = '''
@@ -61,13 +112,13 @@ File contents:
                 print(err)
 
         if not mod_load_error:
-            for fn in functions:
-                print('\nTrying to call',fn+'(): ')
+            for test in tests:
+                print('\nRunning test:',test,': ')
                 print('----Output----')
                 try:
-                    callFunction(fn,stud_mod)
+                    callTest(test,stud_mod)
                 except:
-                    print('Failed to call',fn+'()')
+                    print('Failed to call',test)
                     print('Error info:')
                     for err in sys.exc_info():
                         print(err)
@@ -86,22 +137,36 @@ File contents:
             print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
         print('\n\nFile: ',file_path,'\n')
 
-        # Offer to drop into a python shell in the student directory
-        drop_in = str(input("Would you like to enter a python shell? "))
-        if drop_in.lower() == 'y':
-            current_dir = os.getcwd()
-            os.chdir(file_dir)
-            subprocess.call(['python3','-i',file_name])
-            os.chdir(current_dir)
+        edit_file = False
+        while edit_file.lower() != 'y':
+            # Offer to drop into a python shell in the student directory
+            drop_in = str(input("Enter a python shell (y/n) ? "))
+            if drop_in.lower() == 'y':
+                current_dir = os.getcwd()
+                os.chdir(file_dir)
+                subprocess.call(['python3','-i',file_name])
+                os.chdir(current_dir)
 
-        # Offer to edit student submission for testing
-        edit_file = str(input("Would you like to edit the file? "))
-        if edit_file.lower() == 'y':
-            editor = str(input("What program to use? "))
-            current_dir = os.getcwd()
-            os.chdir(file_dir)
-            subprocess.call([editor,file_name])
-            os.chdir(current_dir)
+            # Offer to edit student submission for testing
+            edit_file = str(input("Edit the file (y/n) ? "))
+            if edit_file.lower() == 'y':
+                current_dir = os.getcwd()
+                os.chdir(file_dir)
+
+                valid_editor = False
+                while not valid_editor:
+                    editor = str(input("Which editor to use? "))
+                    try:
+                        subprocess.call([editor,file_name])
+                        valid_editor = True
+                    except:
+                        try_again = input("Error calling editor. Try again? ")
+                        if try_again.lower != 'y':
+                            valid_editor = True
+
+
+                os.chdir(current_dir)
+
 
         # Get student name, grade, and comments from the grader,
         # and write to file.
@@ -156,41 +221,4 @@ def consolidateGrades(file_name):
         print('Error, the file',file_name,'already exists.\n')
         return False
 
-print("""
-**********************************************************************
-*                                                                    *
-*  Welcome to the CSCI 1133 Superduperawesomepossum Grading Program  *
-*                                                                    *
-**********************************************************************
-""")
-print("Please enter one or more UNIX file name patterns to identify the scripts which need grading. Separate patters with a comma.")
-patterns = str(input("> ")).replace(' ','').split(',')
-
-print("Please enter the names of all the functions you would like\nto try calling within the scripts, using commas to separate the names.")
-function_list = str(input("> ")).replace(' ','').split(',')
-
-student_files = []
-for pattern in patterns:
-    files = find(pattern,'.')
-    for f in files:
-        if f not in student_files:
-            student_files.append(f)
-
-for f in student_files:
-    not_skipped = gradeHomework(f,function_list)
-    if not_skipped:
-        if student_files.index(f) != len(student_files)-1:
-            cont = str(input("Grade another? "))
-            if cont.lower() != 'y':
-                break
-        else:
-            print("No more homework to grade.\n")
-
-cons = str(input("Would you like to consolidate all grade files now? "))
-if cons.lower() == 'y':
-    valid_file = False
-    while not valid_file:
-        f_name = str(input("Save as: "))
-        valid_file = consolidateGrades(f_name)
-
-print("Grading session complete.")
+main()
