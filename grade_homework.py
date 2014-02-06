@@ -4,18 +4,22 @@ import os, importlib, sys, fnmatch, subprocess
 def main():
 
     print("""
-     _____                  _         _    _                                                _    
-    / ____|                | |       | |  | |                                              | |   
-   | |  __  _ __  __ _   __| |  ___  | |__| |  ___   _ __ ___    ___ __      __ ___   _ __ | | __
-   | | |_ || '__|/ _` | / _` | / _ \ |  __  | / _ \ | '_ ` _ \  / _ \\ \ /\ / // _ \ | '__|| |/ /
-   | |__| || |  | (_| || (_| ||  __/ | |  | || (_) || | | | | ||  __/ \ V  V /| (_) || |   |   < 
-    \_____||_|   \__,_| \__,_| \___| |_|  |_| \___/ |_| |_| |_| \___|  \_/\_/  \___/ |_|   |_|\_\
-                                                                                                 
-    """)
-    print("Please enter one or more UNIX file name patterns to identify the scripts which need grading. Separate patterns with a comma.")
+               _____               _                  
+              / ____|             | |                 
+             | |  __ _ __ __ _  __| | ___             
+             | | |_ | '__/ _` |/ _` |/ _ \            
+  _    _     | |__| | | | (_| | (_| |  __/       _    
+ | |  | |     \_____|_|  \__,_|\__,_|\___|      | |   
+ | |__| | ___  _ __ ___   _____      _____  _ __| | __
+ |  __  |/ _ \| '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
+ | |  | | (_) | | | | | |  __/\ V  V / (_) | |  |   < 
+ |_|  |_|\___/|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
+                                                      
+""")
+    print("Please enter one or more UNIX file name patterns\nto identify the scripts which need grading.\nSeparate patterns with a comma.")
     patterns = str(input("> ")).replace(' ','').split(',')
 
-    print("Please enter paths to all testing scripts you would like to run against the homework, separated by commas.")
+    print("Please enter paths to all testing scripts you would\nlike to run against the homework,\nseparated by commas.")
     tests = str(input("> ")).replace(' ','').split(',')
 
     student_files = []
@@ -137,14 +141,15 @@ File contents:
             print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
         print('\n\nFile: ',file_path,'\n')
 
-        edit_file = False
-        while edit_file.lower() != 'y':
+        edit_file = 'y'
+        while edit_file.lower() == 'y':
             # Offer to drop into a python shell in the student directory
             drop_in = str(input("Enter a python shell (y/n) ? "))
             if drop_in.lower() == 'y':
                 current_dir = os.getcwd()
                 os.chdir(file_dir)
                 subprocess.call(['python3','-i',file_name])
+                # TODO: Automatically load in student module
                 os.chdir(current_dir)
 
             # Offer to edit student submission for testing
@@ -153,6 +158,7 @@ File contents:
                 current_dir = os.getcwd()
                 os.chdir(file_dir)
 
+                # TODO: Bad editor sends back to 'use python?' prompt.
                 valid_editor = False
                 while not valid_editor:
                     editor = str(input("Which editor to use? "))
