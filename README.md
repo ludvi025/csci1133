@@ -1,6 +1,12 @@
 # csci1133
 
+## unzip.py
+
+Recursively unzip all zip files in the directory from which this is run.
+
 ## subcheck.py
+
+Checks an unzipped submissions directory as downloaded from moodle. 
 
 ### Things to change before using subcheck.py:
     submission_directory_format = "HW0"
