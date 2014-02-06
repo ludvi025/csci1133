@@ -1,4 +1,4 @@
-# csci1133
+# CSCI 1133 Scripts
 
 ## unzip.py
 
