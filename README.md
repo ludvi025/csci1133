@@ -13,7 +13,7 @@ Checks an unzipped submissions directory as downloaded from moodle.
     submission_files = ["{x500}_0A.py", "{x500}_0B.py"]
 
 ### To run script:
-`python subcheck.py <grades csv file from moodle> <sub directory containing student submissions> -o <output file name>`
+`python subcheck.py <grades csv file> <unzipped submissions folder> -o <output filename>`
 
 ### Current labels:
 * `bad_directory` - if the name of the top level directory is incorrect
