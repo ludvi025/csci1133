@@ -12,10 +12,10 @@ Checks an unzipped submissions directory as downloaded from moodle.
     submission_directory_format = "HW0"
     submission_files = ["{x500}_0A.py", "{x500}_0B.py"]
 
-### To run script:
+### To run script
 `python subcheck.py <grades csv file> <unzipped submissions folder> -o <output filename>`
 
-### Current labels:
+### Current labels
 * `bad_directory` - if the name of the top level directory is incorrect
 * `no_sub` - if there is no submission associated with the student
 * `extra_files` - doesn't indicate a problem with their submission, just lets us know they have extra files in their zip that they submitted
@@ -35,3 +35,32 @@ have worked otherwise.
 * Creates individual grade files for each submission.
 * Consolidates all grades into a single CSV file
 
+### To run script
+
+Run the script in the unzipped submissions folder using:
+
+    python grade_homework.py 
+
+### Filename patterns
+When prompted for filename patterns, enter one or more Unix filename patterns 
+that should be used to identify homework files. For example, if all valid 
+submissions end with "4a.py", you could enter `*4a.py` or `*4a.py, *4A.py` to
+allow for either case of the last letter.
+
+### Test scripts
+When prompted to enter tests to run against student homework, enter one or more
+paths to python scripts that should be run against the submission. Student code
+is contained in a python module named `student_module` so to call a function 
+name `unittest()` that should have been defined by the student would look like:
+
+    student_module.unittest()
+
+or something more flexible:
+
+    try:
+        student_module.unittest()
+    except:
+        try:
+            student_module.unitTest()
+        except:
+            pass
