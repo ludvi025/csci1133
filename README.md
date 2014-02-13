@@ -11,6 +11,10 @@ Checks an unzipped submissions directory as downloaded from moodle.
 ### Things to change before using subcheck.py:
     submission_directory_format = "HW0"
     submission_files = ["{x500}_0A.py", "{x500}_0B.py"]
+    SENDMAIL = "/usr/sbin/sendmail"
+    TA_email = "yourx500@umn.edu"
+    course_name = " DEPT XXXX "
+    email_subject = "DEPT XXXX - Submission Error"
 
 ### To run script
 `python subcheck.py <grades csv file> <unzipped submissions folder> -o <output filename>`
