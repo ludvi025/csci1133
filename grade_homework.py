@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import os, importlib, sys, fnmatch, subprocess
 
+IGNORE = "__MACOSX"
+
 def main():
 
     print("""
@@ -24,12 +26,10 @@ def main():
 
     student_files = []
     for pattern in patterns:
-        files = find(pattern,'.')
+        files = find(pattern,'.',IGNORE)
         for f in files:
             if f not in student_files:
                 student_files.append(f)
-
-    # TODO: Add something to not count MAC zip folders
 
     # For each homework file, grade it
     for file in student_files:
@@ -53,7 +53,7 @@ def main():
 
 # Walks the directory and returns a list of full path names, 
 # like the unix 'find' command
-def find(pattern, directory, ignore=False):
+def find(pattern, directory, ignore=""):
     matches = []
     for root, dirs, files in os.walk(directory):
         for f in files:
