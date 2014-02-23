@@ -1,6 +1,10 @@
 #!/usr/bin/python3
 import os, importlib, sys, fnmatch, subprocess
 
+# TODO :
+# Add comment about how python subprocess gets module
+# Change format of CSV
+
 IGNORE = "__MACOSX"
 
 def main():
@@ -108,29 +112,34 @@ File contents:
         # functions that were supplied by the grader.
         file_name = file_path.split(getJoinStr())[-1]
 
-        print(mod_load_msg)
-        mod_load_error = False
-        try:
-            stud_mod = importScript(file_path)
-        except:
-            mod_load_error = True
-            print('Failed to load module',file_path)
-            print('Error info:')
-            for err in sys.exc_info():
-                print(err)
+        # We can pipe the lines of a script to a subprocess
+        # running their script.
+        if sending_input:
+            pass
+        else:
+            print(mod_load_msg)
+            mod_load_error = False
+            try:
+                stud_mod = importScript(file_path)
+            except:
+                mod_load_error = True
+                print('Failed to load module',file_path)
+                print('Error info:')
+                for err in sys.exc_info():
+                    print(err)
 
-        if not mod_load_error:
-            for test in tests:
-                print('\nRunning test:',test,': ')
-                print('----Output----')
-                try:
-                    callTest(test,stud_mod)
-                except:
-                    print('Failed to call',test)
-                    print('Error info:')
-                    for err in sys.exc_info():
-                        print(err)
-                print('--------------\n')
+            if not mod_load_error:
+                for test in tests:
+                    print('\nRunning test:',test,': ')
+                    print('----Output----')
+                    try:
+                        callTest(test,stud_mod)
+                    except:
+                        print('Failed to call',test)
+                        print('Error info:')
+                        for err in sys.exc_info():
+                            print(err)
+                    print('--------------\n')
 
         # Display the contents of the student's homework file
         # for manual inspection and partial credit. Displays 
