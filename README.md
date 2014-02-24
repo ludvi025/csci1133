@@ -45,6 +45,13 @@ Run the script in the unzipped submissions folder using:
 
     python grade_homework.py 
 
+### Sessions
+The script uses the session name to label the individual grade files it creates
+for each student before they are consolidated. It also saves the list of filename 
+patterns and test scripts so they do not have to be reentered. If you would like
+to change the filename patterns or test scripts, either modify the .session file 
+that is created or delete it and it will prompt you again.
+
 ### Filename patterns
 When prompted for filename patterns, enter one or more Unix filename patterns 
 that should be used to identify homework files. For example, if all valid 
@@ -68,3 +75,15 @@ or something more flexible:
             student_module.unitTest()
         except:
             pass
+
+### 'Enter python shell?'
+After running the test scripts and dumping the file contents, the script asks if
+you would like to 'Enter a python shell (y/n)?'. Entering 'y' will open an interactive
+subprocess of python with the student's script loaded in the global namespace. 
+The actual command used is `python -i student_script.py`. This allows you to 
+try custom commands quickly.
+
+### 'Edit the file?'
+The script will also offer to open the script in an editor subprocess, so you can
+quickly fix typos and see how the script would have run otherwise. After editing,
+the script offers to drop back into a shell or run the tests again.
