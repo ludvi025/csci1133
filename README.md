@@ -47,7 +47,8 @@ Run the script in the unzipped submissions folder using:
 
 ### Sessions
 The script uses the session name to label the individual grade files it creates
-for each student before they are consolidated. It also saves the list of filename 
+for each student before they are consolidated so that multiple graders can work
+in a single submission directory at once. It also saves the list of filename 
 patterns and test scripts so they do not have to be reentered. If you would like
 to change the filename patterns or test scripts, either modify the .session file 
 that is created or delete it and it will prompt you again.
