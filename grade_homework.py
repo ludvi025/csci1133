@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, importlib, sys, fnmatch, subprocess, json
+import os, imp, importlib, sys, fnmatch, subprocess, json
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -37,6 +37,12 @@ def main():
         patterns = session['patterns']
         tests = session['tests']
 
+    # Allow for multiple grading sessions at once
+    if session_name:
+        grade_file_name = session_name + '_grade.csv'
+    else:
+        grade_file_name = 'grade.csv'
+
     student_files = []
     for pattern in patterns:
         files = find(pattern,'.',IGNORE)
@@ -47,7 +53,7 @@ def main():
     # For each homework file, grade it
     last_file = len(student_files)-1
     for file in student_files:
-        not_skipped = gradeHomework(file,tests,session_name)
+        not_skipped = gradeHomework(file,tests,grade_file_name)
         if not_skipped:
             idx = student_files.index(file) 
             remaining = last_file - idx
@@ -63,7 +69,7 @@ def main():
         valid_file = False
         while not valid_file:
             f_name = str(input("Save as: "))
-            valid_file = consolidateGrades(f_name)
+            valid_file = consolidateGrades(f_name, grade_file_name)
 
     print("Grading session complete.")
 
@@ -110,6 +116,9 @@ def importScript(rel_path):
     full_path = os.path.join(root,rel_dir)
     sys.path.append(full_path)
     file_name = rel_path.split(join_str)[-1]
+    mod_name = file_name.replace('.py','')
+    if mod_name in sys.modules:
+        del sys.modules[mod_name]
     return importlib.import_module(file_name.split('.')[0])
     
 # Calls a function in a module using a string
@@ -122,19 +131,7 @@ def callTest(test_path, student_module):
     exec(test)
 
 # Grade a students homework
-def gradeHomework(file_path,tests,session_name=''):
-    # Allow for multiple grading sessions at once
-    if session_name:
-        grade_file_name = session_name + '_grade.csv'
-    else:
-        grade_file_name = 'grade.csv'
-
-    mod_load_msg = '''
------------------------------------------
-Loading module and calling supplied tests
------------------------------------------
-----Output----
-'''
+def gradeHomework(file_path,tests,grade_file_name='grade.csv'):
     file_load_msg = '''
 --------------
 File contents:
@@ -153,29 +150,7 @@ File contents:
         if sending_input:
             pass
         else:
-            print(mod_load_msg)
-            mod_load_error = False
-            try:
-                stud_mod = importScript(file_path)
-            except:
-                mod_load_error = True
-                print('Failed to load module',file_path)
-                print('Error info:')
-                for err in sys.exc_info():
-                    print(err)
-
-            if not mod_load_error:
-                for test in tests:
-                    print('\nRunning test:',test,': ')
-                    print('----Output----')
-                    try:
-                        callTest(test,stud_mod)
-                    except:
-                        print('Failed to call',test)
-                        print('Error info:')
-                        for err in sys.exc_info():
-                            print(err)
-                    print('--------------\n')
+            runTests(tests, file_path)
 
         # Display the contents of the student's homework file
         # for manual inspection and partial credit. Displays 
@@ -198,7 +173,6 @@ File contents:
                 current_dir = os.getcwd()
                 os.chdir(file_dir)
                 subprocess.call(['python3','-i',file_name])
-                # TODO: Automatically load in student module
                 os.chdir(current_dir)
 
             # Offer to edit student submission for testing
@@ -219,8 +193,11 @@ File contents:
                         if try_again.lower != 'y':
                             valid_editor = True
 
-
                 os.chdir(current_dir)
+
+                run_tests_again = input("Run tests again? ")
+                if run_tests_again:
+                    runTests(tests, file_path)
 
         print('\nFile: ',file_path)
 
@@ -244,14 +221,45 @@ File contents:
         print('\nSkipping',file_path, 'because "'+grade_file_name+'" already exists.\n')
         return False
 
-def consolidateGrades(file_name):
+def runTests(tests, file_path):
+    mod_load_msg = '''
+-----------------------------------------
+Loading module and calling supplied tests
+-----------------------------------------
+----Module Load Output----
+'''
+    print(mod_load_msg)
+    mod_load_error = False
+    try:
+        stud_mod = importScript(file_path)
+    except:
+        mod_load_error = True
+        print('Failed to load module',file_path)
+        print('Error info:')
+        for err in sys.exc_info():
+            print(err)
+
+    if not mod_load_error:
+        for test in tests:
+            print('\nRunning test:',test,': ')
+            print('----Test Output----')
+            try:
+                callTest(test,stud_mod)
+            except:
+                print('Failed to call',test)
+                print('Error info:')
+                for err in sys.exc_info():
+                    print(err)
+            print('-------------------\n')
+
+def consolidateGrades(file_name, grade_file_name):
     print('Consolidating grades into',file_name)
     if file_name not in os.listdir(os.getcwd()):
         fout = open(file_name,'a')
         fout.write('First name,Last name,Grade,Comments\n')
 
         # Get all student records that have been generated
-        files = find('grade.csv','.')
+        files = find(grade_file_name,'.')
 
         # Combine into a single file
         for f in files:
