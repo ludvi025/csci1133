@@ -36,11 +36,14 @@ def main():
                 student_files.append(f)
 
     # For each homework file, grade it
+    last_file = len(student_files)-1
     for file in student_files:
         not_skipped = gradeHomework(file,tests)
         if not_skipped:
-            if student_files.index(file) != len(student_files)-1:
-                cont = str(input("Grade another? "))
+            idx = student_files.index(file) 
+            remaining = last_file - idx
+            if idx != last_file:
+                cont = str(input(str(remaining) + " files remaining... Grade another? "))
                 if cont.lower() != 'y':
                     break
             else:
@@ -114,6 +117,7 @@ File contents:
 
         # We can pipe the lines of a script to a subprocess
         # running their script.
+        sending_input = False
         if sending_input:
             pass
         else:
@@ -152,7 +156,7 @@ File contents:
 
         for i in range(len(contents)):
             print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
-        print('\n\nFile: ',file_path,'\n')
+        print('\n')
 
         edit_file = 'y'
         while edit_file.lower() == 'y':
@@ -186,18 +190,20 @@ File contents:
 
                 os.chdir(current_dir)
 
+        print('\nFile: ',file_path)
 
         # Get student name, grade, and comments from the grader,
         # and write to file.
         print('\n----------------------------------')
-        name = str(input('Enter student name: '))
+        first_name = str(input('Enter first name: '))
+        last_name = str(input('Enter last name: '))
         grade = str(input('Enter grade: '))
         comments = str(input('Enter comments: ')).replace(',',';')
         print('----------------------------------')
 
         print('Writing to file...',end='')
         fout = open(file_dir+'/grade.csv','w')
-        fout.write(name+','+grade+','+comments)
+        fout.write(first_name+','+last_name+','+grade+','+comments)
         fout.close()
         print('Done')
         return True
@@ -210,7 +216,7 @@ def consolidateGrades(file_name):
     print('Consolidating grades into',file_name)
     if file_name not in os.listdir(os.getcwd()):
         fout = open(file_name,'a')
-        fout.write('Student,Grade,Comments\n')
+        fout.write('First name,Last name,Grade,Comments\n')
 
         # Get all student records that have been generated
         files = find('grade.csv','.')
