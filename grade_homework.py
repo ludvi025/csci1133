@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, importlib, sys, fnmatch, subprocess
+import os, importlib, sys, fnmatch, subprocess, json
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -22,11 +22,20 @@ def main():
  |_|  |_|\___/|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
                                                       
 """)
-    print("Please enter one or more UNIX file name patterns\nto identify the scripts which need grading.\nSeparate patterns with a comma.")
-    patterns = str(input("> ")).replace(' ','').split(',')
+    # Remember sessions
+    session_name = input("Enter session name: ")
+    session = getSession(session_name) 
+    if not session:
+        print("Enter one or more UNIX file name patterns\nto identify the scripts which need grading.\nSeparate patterns with a comma.")
+        patterns = str(input("> ")).replace(' ','').split(',')
 
-    print("Please enter paths to all testing scripts you would\nlike to run against the homework,\nseparated by commas.")
-    tests = str(input("> ")).replace(' ','').split(',')
+        print("Enter paths to all testing scripts you would\nlike to run against the homework,\nseparated by commas.")
+        tests = str(input("> ")).replace(' ','').split(',')
+
+        writeSession(session_name, patterns, tests)
+    else:
+        patterns = session['patterns']
+        tests = session['tests']
 
     student_files = []
     for pattern in patterns:
@@ -38,7 +47,7 @@ def main():
     # For each homework file, grade it
     last_file = len(student_files)-1
     for file in student_files:
-        not_skipped = gradeHomework(file,tests)
+        not_skipped = gradeHomework(file,tests,session_name)
         if not_skipped:
             idx = student_files.index(file) 
             remaining = last_file - idx
@@ -57,6 +66,23 @@ def main():
             valid_file = consolidateGrades(f_name)
 
     print("Grading session complete.")
+
+def getSession(name):
+    file_name = name+'.session'
+    if os.path.isfile(file_name):
+        fin = open(file_name)
+        patterns = json.loads(fin.readline())
+        tests = json.loads(fin.readline())
+        fin.close()
+        return {"patterns": patterns, "tests": tests}
+    else:
+        return False
+
+def writeSession(name, patterns, tests):
+    fout = open(name+'.session', 'w')
+    fout.write(json.dumps(patterns)+'\n')
+    fout.write(json.dumps(tests)+'\n')
+    fout.close()
 
 # Walks the directory and returns a list of full path names, 
 # like the unix 'find' command
@@ -96,7 +122,13 @@ def callTest(test_path, student_module):
     exec(test)
 
 # Grade a students homework
-def gradeHomework(file_path,tests):
+def gradeHomework(file_path,tests,session_name=''):
+    # Allow for multiple grading sessions at once
+    if session_name:
+        grade_file_name = session_name + '_grade.csv'
+    else:
+        grade_file_name = 'grade.csv'
+
     mod_load_msg = '''
 -----------------------------------------
 Loading module and calling supplied tests
@@ -109,7 +141,7 @@ File contents:
 --------------
 '''
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
-    if 'grade.csv' not in os.listdir(file_dir):
+    if grade_file_name not in os.listdir(file_dir):
 
         # Load student homework module and try to run the 
         # functions that were supplied by the grader.
@@ -202,14 +234,14 @@ File contents:
         print('----------------------------------')
 
         print('Writing to file...',end='')
-        fout = open(file_dir+'/grade.csv','w')
+        fout = open(file_dir+'/'+grade_file_name,'w')
         fout.write(first_name+','+last_name+','+grade+','+comments)
         fout.close()
         print('Done')
         return True
 
     else:
-        print('\nSkipping',file_path, 'because "grade.csv" already exists.\n')
+        print('\nSkipping',file_path, 'because "'+grade_file_name+'" already exists.\n')
         return False
 
 def consolidateGrades(file_name):
