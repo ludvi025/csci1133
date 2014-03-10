@@ -21,3 +21,5 @@ def parseArgs():
   parser.add_argument("-k", "--key")
   parser.add_argument("-o", "--output")
   return parser.parse_args()
+
+main()
