@@ -201,18 +201,31 @@ File contents:
 
         print('\nFile: ',file_path)
 
-        # Get student name, grade, and comments from the grader,
-        # and write to file.
+        # Attempt to get student info from file path
+        stud_info = getStudentInfo(file_path)
+        
+        print('------------\nStudent info\n------------\n')
+        print('First name: ', stud_info.first)
+        print('Last name : ', stud_info.last)
+        print('Moodle id : ', stud_info.moodle)
+        print('------------')
+        correct_info = input('Correct? ')
+
+        if correct_info.lower() != 'y':
+            print('\n----------------------------------')
+            stud_info.first = input('Enter first name: ')
+            stud_info.last = input('Enter last name: ')
+            stud_info.moodle = input('Enter moodle id: ')
+            print('----------------------------------')
+            
         print('\n----------------------------------')
-        first_name = str(input('Enter first name: '))
-        last_name = str(input('Enter last name: '))
         grade = str(input('Enter grade: '))
         comments = str(input('Enter comments: ')).replace(',',';')
         print('----------------------------------')
 
         print('Writing to file...',end='')
         fout = open(file_dir+'/'+grade_file_name,'w')
-        fout.write(first_name+','+last_name+','+grade+','+comments)
+        fout.write(stud_info.moodle+','+stud_info.first+','+stud_info.last+','+grade+','+comments)
         fout.close()
         print('Done')
         return True
@@ -220,6 +233,9 @@ File contents:
     else:
         print('\nSkipping',file_path, 'because "'+grade_file_name+'" already exists.\n')
         return False
+
+def getStudentInfo(file_path):
+    print(file_path)
 
 def runTests(tests, file_path):
     mod_load_msg = '''
@@ -256,7 +272,7 @@ def consolidateGrades(file_name, grade_file_name):
     print('Consolidating grades into',file_name)
     if file_name not in os.listdir(os.getcwd()):
         fout = open(file_name,'a')
-        fout.write('First name,Last name,Grade,Comments\n')
+        fout.write('Moodle id,First name,Last name,Grade,Comments\n')
 
         # Get all student records that have been generated
         files = find(grade_file_name,'.')
@@ -286,4 +302,5 @@ def consolidateGrades(file_name, grade_file_name):
         print('Error, the file',file_name,'already exists.\n')
         return False
 
-main()
+if __name__ == "__main__":
+    main()
