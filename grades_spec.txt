@@ -1,0 +1,7 @@
+CSV Key : Description
+---------------------
+First name : Student's first name
+Last name  : Student's last name
+Moodle id  : N digit number used by moodle to identify students
+Grade      : Students grade, for individual problems
+Comments   : Comments on problem
