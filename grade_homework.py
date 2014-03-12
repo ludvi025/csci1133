@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, fnmatch, subprocess, json
+import os, imp, importlib, sys, fnmatch, subprocess, json, sub_parser
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -205,17 +205,17 @@ File contents:
         stud_info = getStudentInfo(file_path)
         
         print('------------\nStudent info\n------------\n')
-        print('First name: ', stud_info.first)
-        print('Last name : ', stud_info.last)
-        print('Moodle id : ', stud_info.moodle)
+        print('First name: ', stud_info['firstname'])
+        print('Last name : ', stud_info['lastname'])
+        print('Moodle id : ', stud_info['moodleid'])
         print('------------')
         correct_info = input('Correct? ')
 
         if correct_info.lower() != 'y':
             print('\n----------------------------------')
-            stud_info.first = input('Enter first name: ')
-            stud_info.last = input('Enter last name: ')
-            stud_info.moodle = input('Enter moodle id: ')
+            stud_info['firstname'] = input('Enter first name: ')
+            stud_info['lastname'] = input('Enter last name: ')
+            stud_info['moodleid'] = input('Enter moodle id: ')
             print('----------------------------------')
             
         print('\n----------------------------------')
@@ -225,7 +225,10 @@ File contents:
 
         print('Writing to file...',end='')
         fout = open(file_dir+'/'+grade_file_name,'w')
-        fout.write(stud_info.moodle+','+stud_info.first+','+stud_info.last+','+grade+','+comments)
+        fout.write(stud_info['moodleid']+','+
+                stud_info['firstname']+','+
+                stud_info['lastname']+','+
+                grade+','+comments)
         fout.close()
         print('Done')
         return True
@@ -235,7 +238,7 @@ File contents:
         return False
 
 def getStudentInfo(file_path):
-    print(file_path)
+    return sub_parser.parse(file_path)
 
 def runTests(tests, file_path):
     mod_load_msg = '''
