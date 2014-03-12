@@ -204,14 +204,14 @@ File contents:
         # Attempt to get student info from file path
         stud_info = getStudentInfo(file_path)
         
-        print('------------\nStudent info\n------------\n')
+        print('\nStudent info\n------------')
         print('First name: ', stud_info['firstname'])
         print('Last name : ', stud_info['lastname'])
         print('Moodle id : ', stud_info['moodleid'])
         print('------------')
-        correct_info = input('Correct? ')
+        change_info = input('Change? ')
 
-        if correct_info.lower() != 'y':
+        if change_info.lower() == 'y':
             print('\n----------------------------------')
             stud_info['firstname'] = input('Enter first name: ')
             stud_info['lastname'] = input('Enter last name: ')
