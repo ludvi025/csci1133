@@ -4,8 +4,8 @@ import argparse, os, csv
 
 def main():
     args = parseArgs()
-    #unique_keys = ['Moodle id', 'First name', 'Last name']
-    unique_keys = ['First name', 'Last name']
+    unique_keys = ['Moodle id', 'First name', 'Last name']
+    #unique_keys = ['First name', 'Last name']
 
     grade_files = parseFiles(args.inputs)
     
