@@ -6,11 +6,14 @@ cmp_regex = re.compile(regex)
 
 def parse(file_name):
     m = re.match(cmp_regex, file_name)
-    return {
-        'lastname' : m.group('lastname'), 
-        'firstname' : m.group('firstname'), 
-        'moodleid' : m.group('moodleid')
-    }
+    if m:
+      return {
+          'lastname' : m.group('lastname'), 
+          'firstname' : m.group('firstname'), 
+          'moodleid' : m.group('moodleid')
+      }
+    else:
+      return None
 
 def test():
     test1 = "lastname firstname_1128269_assignsubmission_file_HW2/"
