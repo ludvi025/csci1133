@@ -11,27 +11,46 @@ Recursively unzip all zip files in the directory from which this is run.
 
 Given a filepath, get the students first name, last name, and moodle id.  
 
+## unpack.py
+
+### Usage:
+    python unpack.py submission_download_file.zip
+
+submission\_download\_file.zip must be the file downloaded from Moodle. Unzips submission\_download\_file.zip and any zip files contained within it and sorts the files into folders based on their Moodle ID. The folders are named with the Moodle ID as well. This should be run before `sub_check.py` and the resulting directory passed to `sub_check.py`.
+
 ## sub_check.py
 
-Checks an unzipped submissions directory as downloaded from moodle. 
+Checks an unpacked submissions directory as downloaded from moodle. 
 
-### Things to change before using subcheck.py:
-    submission_directory_format = "HW0"
-    submission_files = ["{x500}_0A.py", "{x500}_0B.py"]
-    SENDMAIL = "/usr/sbin/sendmail"
-    TA_email = "yourx500@umn.edu"
-    course_name = " DEPT XXXX "
-    email_subject = "DEPT XXXX - Submission Error"
+### Synopsis:
+    python student_info_file submissions_dir [options]
 
-### To run script
-`python subcheck.py <grades csv file> <unzipped submissions folder> -o <output filename>`
+    student_info_file : CSV file containing student information. Downloadable from Moodle.
+    submissions_dir   : The directory that was created by `unpack.py` from the Moodle submission download.
 
-### Current labels
-* `bad_directory` - if the name of the top level directory is incorrect
-* `no_sub` - if there is no submission associated with the student
-* `extra_files` - doesn't indicate a problem with their submission, just lets us know they have extra files in their zip that they submitted
-* `missing_file` - flag if one of the `submission_files` was not found in student directory.  This could mean that they named their file incorrectly or that they do not have the file
-* `nested_folder` - indicates that the student directory contains a folder/file with the same name as `submission_directory_format`
+    Options
+    -------
+    --config (-c) file : Uses file as the options file as specified below. 
+    --send_email (-e)  : If specified, actually sends emails. Otherwise just dumps the emails that would be sent to "email_dump.txt".
+    --output (-o) file : If specified, dumps info about each submission to file.
+
+### Config File
+The "--config" flag is used to specify an ini file which contains options for sub\_check.py. See "sub\_check\_opts.cfg" for an example.
+
+The following options are available:
+* email : The email of the TA using the script.
+* course : The course the script is being used for.
+* subject : The subject line of the email to be sent.
+* files : A python list of filename templates to be matched. 
+
+### Tags:
+Currently, sub\_check.py tags submissions in the following cases:
+* No submission. Students will not receive an email for this tag.
+* Correct submission. Students will not receive an email for this tag.
+* Extra/missing files.
+* Nested directories.
+* Extra directories.
+* Incorrectly named files.
 
 ## grade_homework.py
 
@@ -95,3 +114,14 @@ try custom commands quickly.
 The script will also offer to open the script in an editor subprocess, so you can
 quickly fix typos and see how the script would have run otherwise. After editing,
 the script offers to drop back into a shell or run the tests again.
+
+## consolidate_problems.py
+
+### Usage:
+
+    python consolidate_problems.py [input-files] [options]
+
+    Consolidates input-files grading files from `grade_homework.py`. 
+
+    --output (-o) : File to write consolidated gradebook to.
+    --key (-k)    : Key used to identify students. Defaults to "Moodle id".
