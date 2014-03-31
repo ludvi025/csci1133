@@ -25,8 +25,14 @@ def main():
             #sendEmail(config.email, config.course, config.subject, result, user_data)
         #else:
             #print("Missing email information from config file")
-    if config["email"] and config["course"] and config["subject"]:
-        sendEmail(config["email"], config["course"], config["subject"], subs, True)
+    if args.send_email:
+        if config["email"] and config["course"] and config["subject"]:
+            sendEmail(config["email"], config["course"], config["subject"], subs)
+        else:
+            print("Missing email information from config file.")
+    else:
+        if config["email"] and config["course"] and config["subject"]:
+            sendEmail(config["email"], config["course"], config["subject"], subs, True)
 
     ## Write to file
     if args.output:
