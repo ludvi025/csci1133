@@ -32,6 +32,7 @@ def main():
             print("Missing email information from config file.")
     else:
         if config["email"] and config["course"] and config["subject"]:
+            print("Dumping email text to 'email_dump.txt'.")
             sendEmail(config["email"], config["course"], config["subject"], subs, True)
 
     ## Write to file
@@ -121,8 +122,8 @@ def getJoinStr():
 
 def getSubs(filename):
     data_file = csv.DictReader(open(filename))
-    return [Submission(entry["Email address"], entry["Moodle ID"], ) for entry in data_file]
-    #return {entry["Moodle ID"] : Submission(entry["Email address"]) for entry in data_file}
+    return [Submission(entry["Email address"], entry["identifier"].split()[-1], ) for entry in data_file]
+    #return {entry["identifier"] : Submission(entry["Email address"]) for entry in data_file}
 
 class Submission:
     def __init__(this, email, moodle_id):
