@@ -64,12 +64,12 @@ def main():
             else:
                 print("No more homework to grade.\n")
 
-    consolidate = str(input("Would you like to consolidate all grade files now? "))
-    if consolidate.lower() == 'y':
-        valid_file = False
-        while not valid_file:
-            f_name = str(input("Save as: "))
-            valid_file = consolidateGrades(f_name, grade_file_name)
+    #consolidate = str(input("Would you like to consolidate all grade files now? "))
+    #if consolidate.lower() == 'y':
+    #    valid_file = False
+    #    while not valid_file:
+    #        f_name = str(input("Save as: "))
+    #        valid_file = consolidateGrades(f_name, grade_file_name)
 
     print("Grading session complete.")
 
@@ -139,6 +139,7 @@ File contents:
 '''
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
     if grade_file_name not in os.listdir(file_dir):
+        fout = open(file_dir+'/'+grade_file_name,'w')
 
         # Load student homework module and try to run the 
         # functions that were supplied by the grader.
@@ -224,7 +225,7 @@ File contents:
         print('----------------------------------')
 
         print('Writing to file...',end='')
-        fout = open(file_dir+'/'+grade_file_name,'w')
+        #fout = open(file_dir+'/'+grade_file_name,'w')
         fout.write(stud_info['moodleid']+','+
                 stud_info['firstname']+','+
                 stud_info['lastname']+','+
