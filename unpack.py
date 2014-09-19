@@ -8,7 +8,7 @@ import zipfile as z, os, argparse, sub_parser, runzip
 def main():
     args = parseArgs()
     # root_dir = runzip.unzipAll(args.input)
-    runzip.unzipAll(args.input)
+    runzip.unzipAll()
     root_dir = getOutputDir(args.input)
     file_map = mapMoodleIdsToFiles(root_dir)
     normalizeDirectory(root_dir, file_map)
