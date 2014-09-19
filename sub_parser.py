@@ -13,7 +13,11 @@ def parse(file_name):
           'moodleid' : m.group('moodleid')
       }
     else:
-      return None
+      return {
+          'lastname' : '', 
+          'firstname' : '', 
+          'moodleid' : ''
+          }
 
 def test():
     test1 = "firstname lastname_1128269_assignsubmission_file_HW2/"
@@ -21,6 +25,7 @@ def test():
     test3 = "stuff/directories/firstname lastname_1128269_assignsubmission_file_HW2/"
     test4 = "stuff/directories/firstname lastname_1128269_assignsubmission_file_HW2/stuffagain/file.py"
     test5 = "stuff/directories/firstname(alternatefirstname) lastname_1093811_assignsubmission_file_HW2/moredire/file.py"
+    test6 = "adf/123/"
 
-    for test in [test1, test2, test3, test4, test5]:
+    for test in [test1, test2, test3, test4, test5, test6]:
         print(parse(test))
