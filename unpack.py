@@ -10,7 +10,7 @@ def main():
     # root_dir = runzip.unzipAll(args.input)
     # runzip.unzipAll()
     # root_dir = getOutputDir(args.input)
-    root_dir = getOutputDir()
+    root_dir = args.input
     file_map = mapMoodleIdsToFiles(root_dir)
     normalizeDirectory(root_dir, file_map)
 
