@@ -7,7 +7,7 @@ Unpacks a submission directory into a standard format.
 ### Usage:
     python unpack.py submission_download_file.zip
 
-submission\_download\_file.zip must be the file downloaded from Moodle. Unzips submission\_download\_file.zip and any zip files contained within it and sorts the files into folders based on their Moodle ID. The folders are named with the Moodle ID as well. This should be run before `sub_check.py` and the resulting directory passed to `sub_check.py`.
+`submission_download_file.zip` must be the file downloaded from Moodle. Unzips `submission_download_file.zip` and any zip files contained within it and sorts the files into folders based on their Moodle ID. The folders are named with the Moodle ID as well. This should be run before `sub_check.py` and the resulting directory passed to `sub_check.py`.
 
 ## sub_check.py
 
@@ -106,15 +106,25 @@ The script will also offer to open the script in an editor subprocess, so you ca
 quickly fix typos and see how the script would have run otherwise. After editing,
 the script offers to drop back into a shell or run the tests again.
 
+## consolidate_grade_files.py
+
+Consolidates invididual student grade files for a single problem into one gradebook.
+
+### Usage:
+
+    python consolidate_grade_files [output] [options]
+
+    Options:
+    --session (-s) : The session used in `grade_homework.py`
+
 ## consolidate_problems.py
+
+Consolidates [input-files] grading files from individual files into a single file. 
 
 ### Usage:
 
     python consolidate_problems.py [input-files] [options]
 
-    Consolidates input-files grading files from `grade_homework.py`. 
-
+    Options:
     --output (-o) : File to write consolidated gradebook to.
     --key (-k)    : Key used to identify students. Defaults to "Moodle id".
-
-## print_empty_files.py
