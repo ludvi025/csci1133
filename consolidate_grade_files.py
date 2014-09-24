@@ -1,4 +1,5 @@
 import os, argparse
+import lib.rfind as rfind
 
 def main():
 	args = parseArgs()
