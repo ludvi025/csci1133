@@ -11,7 +11,6 @@ def main():
     runzip.unzip(args.input)
     root_dir = runzip.getOutputDir(args.input)
     file_map = mapMoodleIdsToFiles(root_dir)
-    # print(file_map)
     normalizeDirectory(root_dir, file_map)
 
 # Rearrange the files so all files are placed directly under
@@ -41,15 +40,15 @@ def mapMoodleIdsToFiles(directory):
     # name, add it to the list for that moodleid
         for f in files:
             info = sub_parser.parse(f)
-            if info:
-                moodle_id = info["moodleid"]
+            if info['moodleid'] != '':
+                moodle_id = info['moodleid']
                 if moodle_id not in file_map:
                     file_map[moodle_id] = []
                 file_map[moodle_id].append(os.path.join(root, f))
         for d in dirs:
             info = sub_parser.parse(d)
-            if info:
-                moodle_id = info["moodleid"]
+            if info['moodleid'] != '':
+                moodle_id = info['moodleid']
                 if moodle_id not in file_map:
                     file_map[moodle_id] = []
                 file_map[moodle_id].append(os.path.join(root, d))
