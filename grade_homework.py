@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, fnmatch, subprocess, json, sub_parser
+import os, imp, importlib, sys, subprocess, json
+import lib.rfind as rfind, lib.sub_parser as sub_parser
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -45,7 +46,7 @@ def main():
 
     student_files = []
     for pattern in patterns:
-        files = find(pattern,'.',IGNORE)
+        files = rfind(pattern,'.',IGNORE)
         for f in files:
             if f not in student_files:
                 student_files.append(f)
@@ -89,21 +90,6 @@ def writeSession(name, patterns, tests):
     fout.write(json.dumps(patterns)+'\n')
     fout.write(json.dumps(tests)+'\n')
     fout.close()
-
-# Walks the directory and returns a list of full path names, 
-# like the unix 'find' command
-def find(pattern, directory, ignore=""):
-    matches = []
-    for root, dirs, files in os.walk(directory):
-        for f in files:
-            if fnmatch.fnmatch(f,pattern):
-                path = os.path.join(root,f)
-                if ignore:
-                    if not ignore in path:
-                        matches.append(path)
-                else:
-                    matches.append(path)
-    return matches
 
 def getJoinStr():
     return os.path.join('.','.')[1:-1]
@@ -279,7 +265,7 @@ def consolidateGrades(file_name, grade_file_name):
         fout.write('Moodle id,First name,Last name,Grade,Comments\n')
 
         # Get all student records that have been generated
-        files = find(grade_file_name,'.')
+        files = rfind(grade_file_name,'.')
 
         # Combine into a single file
         for f in files:
