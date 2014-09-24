@@ -26,7 +26,7 @@ def normalizeDirectory(root, file_map):
             os.mkdir(d)
         for file_path in file_map[moodle_id]:
             f = file_path.split(getJoinStr())[-1]
-            print(f)
+            print('Adding', f, 'to', moodle_id)
             os.renames(file_path, os.path.join(root, moodle_id, f))
 
 def getJoinStr():
