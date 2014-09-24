@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json
-import lib.rfind as rfind, lib.sub_parser as sub_parser
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -10,19 +10,8 @@ IGNORE = "__MACOSX"
 
 def main():
 
-    print("""
-               _____               _                  
-              / ____|             | |                 
-             | |  __ _ __ __ _  __| | ___             
-             | | |_ | '__/ _` |/ _` |/ _ \            
-  _    _     | |__| | | | (_| | (_| |  __/       _    
- | |  | |     \_____|_|  \__,_|\__,_|\___|      | |   
- | |__| | ___  _ __ ___   _____      _____  _ __| | __
- |  __  |/ _ \| '_ ` _ \ / _ \ \ /\ / / _ \| '__| |/ /
- | |  | | (_) | | | | | |  __/\ V  V / (_) | |  |   < 
- |_|  |_|\___/|_| |_| |_|\___| \_/\_/ \___/|_|  |_|\_\
-                                                      
-""")
+    print(art.art)
+
     # Remember sessions
     session_name = input("Enter session name: ")
     session = getSession(session_name) 
@@ -64,13 +53,6 @@ def main():
                     break
             else:
                 print("No more homework to grade.\n")
-
-    #consolidate = str(input("Would you like to consolidate all grade files now? "))
-    #if consolidate.lower() == 'y':
-    #    valid_file = False
-    #    while not valid_file:
-    #        f_name = str(input("Save as: "))
-    #        valid_file = consolidateGrades(f_name, grade_file_name)
 
     print("Grading session complete.")
 
@@ -257,40 +239,6 @@ Loading module and calling supplied tests
                 for err in sys.exc_info():
                     print(err)
             print('-------------------\n')
-
-def consolidateGrades(file_name, grade_file_name):
-    print('Consolidating grades into',file_name)
-    if file_name not in os.listdir(os.getcwd()):
-        fout = open(file_name,'a')
-        fout.write('Moodle id,First name,Last name,Grade,Comments\n')
-
-        # Get all student records that have been generated
-        files = rfind.find(grade_file_name,'.')
-
-        # Combine into a single file
-        for f in files:
-            fin = open(f,'r')
-            record = fin.read()
-            fin.close()
-
-            fout.write(record+'\n')
-            print('.',end='')
-
-        fout.close()
-        print('\nFinished. See \''+file_name+'\' for output.\n')
-
-        # Offer to delete individual grade.csv files
-        ans = str(input('Would you like to clean up individual grading files? '))
-        if ans.lower() == 'y':
-            print('Deleting files.',end='')
-            for f in files:
-                os.remove(f)
-                print('.',end='')
-            print('Done')
-        return True
-    else:
-        print('Error, the file',file_name,'already exists.\n')
-        return False
 
 if __name__ == "__main__":
     main()
