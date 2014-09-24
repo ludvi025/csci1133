@@ -1,20 +1,28 @@
 import os
-import os
+import lib.rfind as rfind
 
-files = [(x, os.listdir(x) for x in os.listdir() if os.path.isdir(x)]
+def main():
+	files = rfind.find('*.py', '.')
 
-hw_files = []
-empty_files = []
+	hw_files = []
+	empty_files = []
 
-for d in files:
-	for f in d[1]:
+	for f in files:
+		print(f)
 		if f[-3:] == '.py':
-			hw_files.append(d[0]+'/'+f)
+			hw_files.append(f)
 
-for f in hw_files:
-	s = open(f).read().strip().replace('\n','')
-	if s == '':
-		empty_files.append(f)
+	for f in hw_files:
+		print(f)
+		s = open(f).read().strip().replace('\n','')
+		if s == '':
+			empty_files.append(f)
 
-for f in empty_files:
-	print(f)
+	print('Printing empty files:')
+	print('---------------------')
+	for f in empty_files:
+		print(f)
+	print('---------------------')
+
+if __name__ == '__main__':
+	main()
