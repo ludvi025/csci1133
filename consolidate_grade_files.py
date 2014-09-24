@@ -47,6 +47,9 @@ def consolidateGrades(file_name, grade_file_name):
 
 def parseArgs():
 	parser = argparse.ArgumentParser()
-    parser.add_argument('output')
-    parser.add_argument('-s', '--session')
-    return parser.parse_args()
+	parser.add_argument('output')
+	parser.add_argument('-s', '--session')
+	return parser.parse_args()
+
+if __name__ == '__main__':
+	main()
