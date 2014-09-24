@@ -11,7 +11,8 @@ def main():
     runzip.unzip(args.input)
     root_dir = runzip.getOutputDir(args.input)
     file_map = mapMoodleIdsToFiles(root_dir)
-    normalizeDirectory(root_dir, file_map)
+    print(file_map)
+    # normalizeDirectory(root_dir, file_map)
 
 # Rearrange the files so all files are placed directly under
 # a directory with the students moodle id as its name
