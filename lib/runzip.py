@@ -4,7 +4,6 @@
 # files in files just unzipped.
 
 import zipfile as z, os, argparse
-import rfind
 
 def main():
     zfile = getZipArg()
@@ -32,14 +31,13 @@ def getOutputDir(file_name):
 
 def unzip(file_name, path=""):
     full_path = os.path.join(path, file_name) if path != ""  else file_name
-    print(full_path)
 
     if os.path.isdir(full_path):
         for fn in os.listdir(full_path):
             unzip(fn, full_path)
     elif z.is_zipfile(full_path):
-        print('\tiszip')
         unzipped_name = getOutputDir(full_path)
+        print("unzipping:", full_path)
         z.ZipFile(full_path).extractall(unzipped_name)
         if path != "":
             os.remove(full_path)
