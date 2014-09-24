@@ -3,33 +3,15 @@
 # Unzips all files in the directory its run and then unzips all zipped
 # files in files just unzipped.
 
-import zipfile as z, os, argparse, sub_parser, runzip
+import zipfile as z, os, argparse
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.runzip as runzip
 
 def main():
     args = parseArgs()
-    # root_dir = runzip.unzipAll(args.input)
-    # runzip.unzipAll()
-    # root_dir = getOutputDir(args.input)
-    root_dir = args.input
+    runzip.unzip(args.input)
+    root_dir = runzip.getOutputDir(args.input)
     file_map = mapMoodleIdsToFiles(root_dir)
     normalizeDirectory(root_dir, file_map)
-
-def getOutputDir(file_name):
-    return '.'.join(file_name.split('.')[0:-1])
-
-# Unzip 'zip_file' and any zip files nested within it
-# def runzip(zip_file, delete=False, depth=0):
-    # if z.is_zipfile(zip_file):
-    #     output_dir = getOutputDir(zip_file)
-    #     z.ZipFile(zip_file).extractall(output_dir)
-    #     for file_name in os.listdir(output_dir):
-    #         runzip(os.path.join(output_dir, file_name), True, depth+1)
-    #     if delete:
-    #         os.remove(zip_file)
-    #     return output_dir
-    # elif os.path.isdir(zip_file):
-    #     for file_name in os.listdir(zip_file):
-    #         runzip(os.path.join(zip_file, file_name), True, depth+1)
 
 # Rearrange the files so all files are placed directly under
 # a directory with the students moodle id as its name
