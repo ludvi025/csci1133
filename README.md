@@ -1,17 +1,8 @@
 # CSCI 1133 Scripts
 
-## runzip.py
-
-Recursively unzip all zip files in the directory from which this is run.
-
-## sub_parser.py
-
-    import sub_parser
-    student_info = sub_parser.parse(path)
-
-Given a filepath, get the students first name, last name, and moodle id.  
-
 ## unpack.py
+
+Unpacks a submission directory into a standard format.
 
 ### Usage:
     python unpack.py submission_download_file.zip
@@ -125,3 +116,5 @@ the script offers to drop back into a shell or run the tests again.
 
     --output (-o) : File to write consolidated gradebook to.
     --key (-k)    : Key used to identify students. Defaults to "Moodle id".
+
+## print_empty_files.py
