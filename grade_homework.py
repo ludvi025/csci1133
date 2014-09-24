@@ -46,7 +46,7 @@ def main():
 
     student_files = []
     for pattern in patterns:
-        files = rfind(pattern,'.',IGNORE)
+        files = rfind.find(pattern,'.',IGNORE)
         for f in files:
             if f not in student_files:
                 student_files.append(f)
@@ -265,7 +265,7 @@ def consolidateGrades(file_name, grade_file_name):
         fout.write('Moodle id,First name,Last name,Grade,Comments\n')
 
         # Get all student records that have been generated
-        files = rfind(grade_file_name,'.')
+        files = rfind.find(grade_file_name,'.')
 
         # Combine into a single file
         for f in files:
