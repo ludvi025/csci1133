@@ -81,15 +81,30 @@ def getJoinStr():
 def importScript(rel_path):
     root = os.getcwd()
     join_str = getJoinStr()
+
     rel_dir = join_str.join(rel_path.split(join_str)[1:-1])
     full_path = os.path.join(root,rel_dir)
     sys.path.append(full_path)
+
     file_name = rel_path.split(join_str)[-1]
     mod_name = file_name.replace('.py','')
+
+    need_reload = False
     if mod_name in sys.modules:
+        need_reload = True
         del sys.modules[mod_name]
+
     return importlib.import_module(file_name.split('.')[0])
-    
+
+# HERE
+    # if need_reload:
+    #     importlib.reload(mod)
+    # else:
+    #     mod = importlib.import_module(file_name.split('.')[0])
+
+    # return mod
+# TO HERE
+
 # Calls a function in a module using a string
 def callFunction(foo, mod):
     method = getattr(mod,foo)
@@ -107,8 +122,12 @@ File contents:
 --------------
 '''
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
-    if grade_file_name not in os.listdir(file_dir):
+    file_list = os.listdir(file_dir)
+    if grade_file_name not in file_list:
+
         fout = open(file_dir+'/'+grade_file_name,'w')
+        fout.write('Grading unfinished for: ' + file_path)
+        fout.close()
 
         # Load student homework module and try to run the 
         # functions that were supplied by the grader.
@@ -195,7 +214,7 @@ File contents:
         print('----------------------------------')
 
         print('Writing to file...',end='')
-        #fout = open(file_dir+'/'+grade_file_name,'w')
+        fout = open(file_dir+'/'+grade_file_name,'w')
         fout.write(stud_info['moodleid']+','+
                 stud_info['firstname']+','+
                 stud_info['lastname']+','+
@@ -238,27 +257,21 @@ Loading module and calling supplied tests
                     callTest(test,stud_mod)
                 except:
                     print('Failed to call',test)
-                    print('Error info:')
-                    for err in sys.exc_info():
-                        print(err)
+                print('Error info:')
+                for err in sys.exc_info():
+                    print(err)
                 print('-------------------\n')
     else:
         play_again = True
         while play_again: 
-            try:
-                stud_mod = importScript(file_path)
-            except:
-                mod_load_error = True
-                print('Failed to load module',file_path)
-                print('Error info:')
-                for err in sys.exc_info():
-                    print(err)
-
-            if not mod_load_error:
-                print('\n-------------------')
-                print('Finished loading module.')
-                play_again = True if input('Reload module? ').lower() == 'y' else False
-                print('-------------------\n')
+            current_dir = os.getcwd()
+            file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
+            file_name = file_path.split(getJoinStr())[-1]
+            print(file_dir, file_name)
+            os.chdir(file_dir)
+            subprocess.call([sys.executable,'-i',file_name])
+            os.chdir(current_dir)
+            play_again = True if input('Reload module? ').lower() == 'y' else False
 
 if __name__ == "__main__":
     main()
