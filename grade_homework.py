@@ -20,7 +20,8 @@ def main():
         patterns = str(input("> ")).replace(' ','').split(',')
 
         print("Enter paths to all testing scripts you would\nlike to run against the homework,\nseparated by commas.")
-        tests = str(input("> ")).replace(' ','').split(',')
+        tests = str(input("> "))
+        tests = tests.replace(' ','').split(',') if tests != '' else None
 
         writeSession(session_name, patterns, tests)
     else:
@@ -121,6 +122,7 @@ File contents:
         else:
             runTests(tests, file_path)
 
+
         # Display the contents of the student's homework file
         # for manual inspection and partial credit. Displays 
         # with line numbers for easy reference.
@@ -218,27 +220,45 @@ Loading module and calling supplied tests
 '''
     print(mod_load_msg)
     mod_load_error = False
-    try:
-        stud_mod = importScript(file_path)
-    except:
-        mod_load_error = True
-        print('Failed to load module',file_path)
-        print('Error info:')
-        for err in sys.exc_info():
-            print(err)
+    if tests:
+        try:
+            stud_mod = importScript(file_path)
+        except:
+            mod_load_error = True
+            print('Failed to load module',file_path)
+            print('Error info:')
+            for err in sys.exc_info():
+                print(err)
 
-    if not mod_load_error:
-        for test in tests:
-            print('\nRunning test:',test,': ')
-            print('----Test Output----')
+        if not mod_load_error:
+            for test in tests:
+                print('\nRunning test:',test,': ')
+                print('----Test Output----')
+                try:
+                    callTest(test,stud_mod)
+                except:
+                    print('Failed to call',test)
+                    print('Error info:')
+                    for err in sys.exc_info():
+                        print(err)
+                print('-------------------\n')
+    else:
+        play_again = True
+        while play_again: 
             try:
-                callTest(test,stud_mod)
+                stud_mod = importScript(file_path)
             except:
-                print('Failed to call',test)
+                mod_load_error = True
+                print('Failed to load module',file_path)
                 print('Error info:')
                 for err in sys.exc_info():
                     print(err)
-            print('-------------------\n')
+
+            if not mod_load_error:
+                print('\n-------------------')
+                print('Finished loading module.')
+                play_again = True if input('Reload module? ').lower() == 'y' else False
+                print('-------------------\n')
 
 if __name__ == "__main__":
     main()
