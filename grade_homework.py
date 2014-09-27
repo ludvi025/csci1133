@@ -214,12 +214,15 @@ File contents:
         print('----------------------------------')
 
         print('Writing to file...',end='')
-        fout = open(file_dir+'/'+grade_file_name,'w')
+        fn = file_dir+'/'+grade_file_name
+        fout = open(fn,'w')
         fout.write(stud_info['moodleid']+','+
                 stud_info['firstname']+','+
                 stud_info['lastname']+','+
                 grade+','+comments)
         fout.close()
+        subprocess.call(['chmod', '770', fn]) 
+
         print('Done')
         return True
 
