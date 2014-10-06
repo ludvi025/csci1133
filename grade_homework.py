@@ -210,7 +210,7 @@ File contents:
             
         print('\n----------------------------------')
         grade = str(input('Enter grade: '))
-        comments = str(input('Enter comments: ')).replace(',',';')
+        comments = str(input('Enter comments: '))
         print('----------------------------------')
 
         print('Writing to file...',end='')
