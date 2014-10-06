@@ -24,10 +24,15 @@ def main():
         tests = str(input("> "))
         tests = tests.replace(' ','').split(',') if tests != '' else None
 
-        writeSession(session_name, patterns, tests)
+        print("Enter the maximum point value for the assignment to verify that students are not given extra credit.")
+        print("If you do not wish to limit student's potential, then use -1")
+        maxpoints = float(input("> "))
+
+        writeSession(session_name, patterns, tests, maxpoints)
     else:
         patterns = session['patterns']
         tests = session['tests']
+        maxpoints = session['maxpoints']
 
     # Allow for multiple grading sessions at once
     if session_name:
@@ -45,7 +50,7 @@ def main():
     # For each homework file, grade it
     last_file = len(student_files)-1
     for file in student_files:
-        not_skipped = gradeHomework(file,tests,grade_file_name)
+        not_skipped = gradeHomework(file,tests,maxpoints,grade_file_name)
         if not_skipped:
             idx = student_files.index(file) 
             remaining = last_file - idx
@@ -64,15 +69,17 @@ def getSession(name):
         fin = open(file_name)
         patterns = json.loads(fin.readline())
         tests = json.loads(fin.readline())
+        maxpoints = float(json.loads(fin.readline()))
         fin.close()
-        return {"patterns": patterns, "tests": tests}
+        return {"patterns": patterns, "tests": tests, "maxpoints": maxpoints}
     else:
         return False
 
-def writeSession(name, patterns, tests):
+def writeSession(name, patterns, tests, maxpoints):
     fout = open(name+'.session', 'w')
     fout.write(json.dumps(patterns)+'\n')
     fout.write(json.dumps(tests)+'\n')
+    fout.write(json.dumps(maxpoints)+'\n')
     fout.close()
 
 def getJoinStr():
@@ -116,7 +123,7 @@ def callTest(test_path, student_module):
     exec(test)
 
 # Grade a students homework
-def gradeHomework(file_path,tests,grade_file_name='grade.csv'):
+def gradeHomework(file_path,tests,maxpoints,grade_file_name='grade.csv'):
     file_load_msg = '''
 --------------
 File contents:
@@ -210,7 +217,15 @@ File contents:
             print('----------------------------------')
             
         print('\n----------------------------------')
-        grade = str(input('Enter grade: '))
+        grade = -1
+        if maxpoints == -1:
+            maxpoints = float('inf')
+        while (grade > maxpoints) or (grade < 0):
+            gradestr = input('Enter grade: ')
+            try:
+                grade = float(gradestr)
+            except ValueError:
+                print("Not a valid grade. You're smarter than that...")
         comments = str(input('Enter comments: '))
         print('----------------------------------')
 
