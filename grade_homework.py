@@ -1,16 +1,17 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.version as version
 
 # TODO :
 # Add comment about how python subprocess gets module
-# Change format of CSV
 
 IGNORE = "__MACOSX"
 
 def main():
 
+    # Print welcome art and version
     print(art.art)
+    print("Version: {0:06.2f}\n".format(version.version).rjust(55))
 
     # Remember sessions
     session_name = input("Enter session name: ")
