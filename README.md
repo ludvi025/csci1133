@@ -131,8 +131,12 @@ Consolidates [input-files] grading files from individual files into a single fil
 
 ## update_version.py
 
-Generates a new lib/version.py file so that someone who runs the script may see
+Generates a new `lib/version.py` file so that someone who runs the script may see
 what version of the grading scripts they are using, regardless of which directory
 they are in.
 
-Note: requires manual execution upon each `git pull` of the repo.
+### Usage:
+
+    python update_version.py
+
+__Note:__ requires manual execution upon each `git pull` of the repo.
