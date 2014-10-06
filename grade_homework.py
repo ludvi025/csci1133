@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, subprocess, json
+import os, imp, importlib, sys, subprocess, json, csv
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art
 
 # TODO :
@@ -215,12 +215,10 @@ File contents:
 
         print('Writing to file...',end='')
         fn = file_dir+'/'+grade_file_name
-        fout = open(fn,'w')
-        fout.write(stud_info['moodleid']+','+
-                stud_info['firstname']+','+
-                stud_info['lastname']+','+
-                grade+','+comments)
-        fout.close()
+        with open(fn, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([stud_info['moodleid'], stud_info['firstname'],
+                             stud_info['lastname'], grade, comments])
         os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
         print('Done')
