@@ -221,7 +221,7 @@ File contents:
                 stud_info['lastname']+','+
                 grade+','+comments)
         fout.close()
-        subprocess.call(['chmod', '770', fn]) 
+        os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
         print('Done')
         return True
