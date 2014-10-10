@@ -1,4 +1,4 @@
-import os, argparse
+import os, argparse, csv
 import lib.rfind as rfind
 
 def main():
@@ -19,19 +19,19 @@ def main():
 
 def consolidateGrades(file_name, grade_file_name):
     print('Consolidating grades into',file_name)
-    fout = open(file_name,'a')
-    fout.write('Moodle id,First name,Last name,Grade,Comments\n')
+    fout = open(file_name,'a', newline='')
+    cout = csv.writer(fout)
+    cout.writerow(['Moodle id','First name','Last name','Grade','Comments','Grader ID'])
 
     # Get all student records that have been generated
     files = rfind.find(grade_file_name,'.')
 
     # Combine into a single file
     for f in files:
-        fin = open(f,'r')
-        record = fin.read()
-        fin.close()
-
-        fout.write(record+'\n')
+        with open(f, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            for record in reader:
+                cout.writerow(record)
         print('.',end='')
 
     fout.close()
