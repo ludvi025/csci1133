@@ -25,8 +25,11 @@ def main():
         tests = tests.replace(' ','').split(',') if tests != '' else None
 
         print("Enter the maximum point value for the assignment to verify that students are not given extra credit.")
-        print("If you do not wish to limit student's potential, then use -1")
-        maxpoints = float(input("> "))
+        maxpoints = input("> ")
+        if maxpoints != '':
+            maxpoints = float(maxpoints)
+        else:
+            maxpoints = -1
 
         writeSession(session_name, patterns, tests, maxpoints)
     else:
