@@ -1,3 +1,4 @@
+# /usr/env/python
 # A way to get the number of revisions in git
 # The number of revisions is what we use as a version number, divided by 100
 import subprocess
