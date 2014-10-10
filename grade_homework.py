@@ -84,11 +84,13 @@ def getSession(name):
         return False
 
 def writeSession(name, patterns, tests, maxpoints):
-    fout = open(name+'.session', 'w')
+    fn = name+'.session'
+    fout = open(fn, 'w')
     fout.write(json.dumps(patterns)+'\n')
     fout.write(json.dumps(tests)+'\n')
     fout.write(json.dumps(maxpoints)+'\n')
     fout.close()
+    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
 def getJoinStr():
     return os.path.join('.','.')[1:-1]
