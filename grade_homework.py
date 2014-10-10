@@ -136,9 +136,11 @@ File contents:
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
     file_list = os.listdir(file_dir)
 
-    fout = open(file_dir+'/'+grade_file_name,'w')
+    fn = file_dir+'/'+grade_file_name
+    fout = open(fn,'w')
     fout.write('Grading unfinished for: ' + file_path)
     fout.close()
+    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
@@ -287,6 +289,10 @@ Loading module and calling supplied tests
             subprocess.call([sys.executable,'-i',file_name])
             os.chdir(current_dir)
             play_again = True if input('Reload module? ').lower() == 'y' else False
+
+def ctrlc_handler(signal, frame):
+     print('You forced the grading script to quit...\nCleaning up and deleting any temporary grade files.')
+
 
 if __name__ == "__main__":
     main()
