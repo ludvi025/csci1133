@@ -135,6 +135,9 @@ Generates a new `lib/version.py` file so that someone who runs the script may se
 what version of the grading scripts they are using, regardless of which directory
 they are in.
 
+The `grade_homework` script will fail to execute if this has not been run at
+least once since the initial `git clone`.
+
 ### Usage:
 
     python update_version.py
