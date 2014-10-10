@@ -53,13 +53,14 @@ def main():
         file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
         file_list = os.listdir(file_dir)
         if grade_file_name not in file_list:
-            gradeHomework(file,tests,maxpoints,grade_file_name)
             idx = student_files.index(file) 
             remaining = last_file - idx
             if idx != last_file:
                 cont = str(input(str(remaining) + " files remaining... Grade another? "))
                 if cont.lower() != 'y':
                     break
+                else:
+                    gradeHomework(file,tests,maxpoints,grade_file_name)
             else:
                 print("No more homework to grade.\n")
         else:
