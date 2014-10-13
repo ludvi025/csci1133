@@ -69,6 +69,15 @@ def main():
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
+    incomplete_check = input("Check for incomplete grade files? ")
+    if incomplete_check.lower() == "y":
+        files_found = cleanupIncompletes(grade_file_name)
+        if len(files_found) > 0:
+            print("Found and removed the following unfinished files:")
+            for fn in files_found:
+                print(fn)
+            print("Rerun the grading script to grade these again before consolidating.")
+
     print("Grading session complete.")
 
 def getSession(name):
@@ -295,6 +304,17 @@ Loading module and calling supplied tests
             subprocess.call([sys.executable,'-i',file_name])
             os.chdir(current_dir)
             play_again = True if input('Reload module? ').lower() == 'y' else False
+
+def cleanupIncompletes(grade_file_name):
+    files = rfind.find(grade_file_name, '.')
+    found_files = []
+    for fn in files:
+        with open(fn, 'r') as f:
+            if "Grading unfinished for" in f.read():
+                found_files.append(fn)
+                f.close()
+                os.remove(fn)
+    return found_files
 
 def ctrlc_handler(signal, frame):
      print('You forced the grading script to quit...\nCleaning up and deleting any temporary grade files.')
