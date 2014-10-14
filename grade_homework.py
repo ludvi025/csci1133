@@ -46,6 +46,7 @@ def main():
     student_files = []
     for pattern in patterns:
         files = rfind.find(pattern,'.',IGNORE)
+        print(files)
         for f in files:
             if f not in student_files:
                 student_files.append(f)
@@ -274,9 +275,9 @@ Loading module and calling supplied tests
     if tests:
         for test in tests:
             out, err = run_with_input.runInteractive(file_path, open(test).read())
-            print('Output from', test', \n------')
+            print('Output from', test, '\n------')
             print(out)
-            print('Errors from', test', \n------')
+            print('Errors from', test, '\n------')
             print(err)
 
 #        try:
