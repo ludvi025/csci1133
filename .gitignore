@@ -3,3 +3,4 @@ __pycache__
 *.sublime-workspace
 vs2013/
 lib/version.py
+testing/*
