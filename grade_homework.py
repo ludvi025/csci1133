@@ -46,13 +46,12 @@ def main():
     student_files = []
     for pattern in patterns:
         files = rfind.find(pattern,'.',IGNORE)
-        print(files)
         for f in files:
             if f not in student_files:
                 student_files.append(f)
 
     # For each homework file, grade it
-    last_file = len(student_files)-1
+    last_file = len(student_files)
     for file in student_files:
         file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
         file_list = os.listdir(file_dir)
