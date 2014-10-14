@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, stat
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.version as version
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.version as version, lib.stdin_pipe.run_with_input as run_with_input
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -272,27 +272,34 @@ Loading module and calling supplied tests
     print(mod_load_msg)
     mod_load_error = False
     if tests:
-        try:
-            stud_mod = importScript(file_path)
-        except:
-            mod_load_error = True
-            print('Failed to load module',file_path)
-            print('Error info:')
-            for err in sys.exc_info():
-                print(err)
+        for test in tests:
+            out, err = run_with_input.runInteractive(file_path, open(test).read())
+            print('Output from', test', \n------')
+            print(out)
+            print('Errors from', test', \n------')
+            print(err)
 
-        if not mod_load_error:
-            for test in tests:
-                print('\nRunning test:',test,': ')
-                print('----Test Output----')
-                try:
-                    callTest(test,stud_mod)
-                except:
-                    print('Failed to call',test)
-                print('Error info:')
-                for err in sys.exc_info():
-                    print(err)
-                print('-------------------\n')
+#        try:
+#            stud_mod = importScript(file_path)
+#        except:
+#            mod_load_error = True
+#            print('Failed to load module',file_path)
+#            print('Error info:')
+#            for err in sys.exc_info():
+#                print(err)
+#
+#        if not mod_load_error:
+#            for test in tests:
+#                print('\nRunning test:',test,': ')
+#                print('----Test Output----')
+#                try:
+#                    callTest(test,stud_mod)
+#                except:
+#                    print('Failed to call',test)
+#                print('Error info:')
+#                for err in sys.exc_info():
+#                    print(err)
+#                print('-------------------\n')
     else:
         play_again = True
         while play_again: 
