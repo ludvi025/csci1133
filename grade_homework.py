@@ -309,6 +309,11 @@ Loading module and calling supplied tests
 #                    print(err)
 #                print('-------------------\n')
     else:
+        print('Loading student module in separate instance of python.')
+        print('Press Ctrl+D to return to grading script when finished.')
+        print('Hint: If the student does not call their function, type')
+        print('run the function dir() at the python prompt to see what')
+        print('it\'s called.')
         play_again = True
         while play_again: 
             current_dir = os.getcwd()
