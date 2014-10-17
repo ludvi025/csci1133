@@ -77,7 +77,7 @@ def main():
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
-    incomplete_check = input("Check for incomplete grade files? ")
+    incomplete_check = input("Check for incomplete grade files (y/n)? ")
     if incomplete_check.lower() == "y":
         files_found = cleanupIncompletes(grade_file_name)
         if len(files_found) > 0:
