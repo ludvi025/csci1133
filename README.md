@@ -1,11 +1,11 @@
-# CSCI 1133 Scripts
+# CSCI 1133 Grading Scripts
 
 ## unpack.py
 
 Unpacks a submission directory into a standard format.
 
 ### Usage:
-    python unpack.py submission_download_file.zip
+    python unpack.py submission_download.zip
 
 `submission_download_file.zip` must be the file downloaded from Moodle. Unzips `submission_download_file.zip` and any zip files contained within it and sorts the files into folders based on their Moodle ID. The folders are named with the Moodle ID as well. This should be run before `sub_check.py` and the resulting directory passed to `sub_check.py`.
 
@@ -112,10 +112,13 @@ Consolidates invididual student grade files for a single problem into one gradeb
 
 ### Usage:
 
-    python consolidate_grade_files [output] [options]
+    python consolidate_grade_files.py [output_file_name] [options]
 
     Options:
     --session (-s) : The session used in `grade_homework.py`
+
+    Eg:
+    python consolidate_grade_files.py hw2_grades.csv -s hw2
 
 ## consolidate_problems.py
 
