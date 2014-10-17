@@ -1,5 +1,7 @@
 # CSCI 1133 Grading Scripts
 
+See [WALKTHROUGH.md]() for 
+
 ## unpack.py
 
 Unpacks a submission directory into a standard format.
