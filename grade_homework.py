@@ -1,6 +1,14 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, stat
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.version as version
+
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input
+
+# Get version if not already gotten
+try:
+    import lib.version as version
+except:
+    subprocess.Popen([sys.executable, 'update_version.py']).wait()
+    import lib.version as version
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -51,7 +59,7 @@ def main():
                 student_files.append(f)
 
     # For each homework file, grade it
-    last_file = len(student_files)-1
+    last_file = len(student_files)
     for file in student_files:
         file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
         file_list = os.listdir(file_dir)
@@ -68,6 +76,15 @@ def main():
                 print("No more homework to grade.\n")
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
+
+    incomplete_check = input("Check for incomplete grade files (y/n)? ")
+    if incomplete_check.lower() == "y":
+        files_found = cleanupIncompletes(grade_file_name)
+        if len(files_found) > 0:
+            print("Found and removed the following unfinished files:")
+            for fn in files_found:
+                print(fn)
+            print("Rerun the grading script to grade these again before consolidating.")
 
     print("Grading session complete.")
 
@@ -263,38 +280,53 @@ Loading module and calling supplied tests
     print(mod_load_msg)
     mod_load_error = False
     if tests:
-        try:
-            stud_mod = importScript(file_path)
-        except:
-            mod_load_error = True
-            print('Failed to load module',file_path)
-            print('Error info:')
-            for err in sys.exc_info():
-                print(err)
+        for test in tests:
+            out, err = run_with_input.runInteractive(file_path, open(test).read())
+            out = out.replace('>>>','\n').replace('...','\n')
+            err = err.replace('>>>','\n').replace('...','\n')
+            print('Output from', test, '\n------')
+            print(out)
+            print('Errors from', test, '\n------')
+            print(err)
+            print()
 
-        if not mod_load_error:
-            for test in tests:
-                print('\nRunning test:',test,': ')
-                print('----Test Output----')
-                try:
-                    callTest(test,stud_mod)
-                except:
-                    print('Failed to call',test)
-                print('Error info:')
-                for err in sys.exc_info():
-                    print(err)
-                print('-------------------\n')
+        play_again = input('Load interactive python shell (y/n)? ').lower() == 'y'
+
     else:
         play_again = True
-        while play_again: 
-            current_dir = os.getcwd()
-            file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
-            file_name = file_path.split(getJoinStr())[-1]
-            print(file_dir, file_name)
-            os.chdir(file_dir)
-            subprocess.call([sys.executable,'-i',file_name])
-            os.chdir(current_dir)
-            play_again = True if input('Reload module? ').lower() == 'y' else False
+
+    if play_again:
+        print('\n-----')
+        print('Loading student module in separate instance of python.')
+        print('Press Ctrl+D to return to grading script when finished.')
+        print('Hint: If the student does not call their function, type')
+        print('run the function dir() at the python prompt to see what')
+        print('it\'s called.')
+        print('-----\n')
+
+    while play_again: 
+        loadShell(file_path)
+        play_again = input('Reload module? ').lower() == 'y'
+
+def loadShell(file_path):
+    current_dir = os.getcwd()
+    file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
+    file_name = file_path.split(getJoinStr())[-1]
+    print(file_dir, file_name)
+    os.chdir(file_dir)
+    subprocess.call([sys.executable,'-i',file_name])
+    os.chdir(current_dir)
+
+def cleanupIncompletes(grade_file_name):
+    files = rfind.find(grade_file_name, '.')
+    found_files = []
+    for fn in files:
+        with open(fn, 'r') as f:
+            if "Grading unfinished for" in f.read():
+                found_files.append(fn)
+                f.close()
+                os.remove(fn)
+    return found_files
 
 def ctrlc_handler(signal, frame):
      print('You forced the grading script to quit...\nCleaning up and deleting any temporary grade files.')
