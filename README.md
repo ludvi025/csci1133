@@ -1,6 +1,6 @@
 # CSCI 1133 Grading Scripts
 
-See [WALKTHROUGH.md](./WALKTHROUGH.md) for 
+*See WALKTHROUGH.md for a basic usage walkthrough.*
 
 ## unpack.py
 
