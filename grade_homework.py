@@ -4,11 +4,11 @@ import os, imp, importlib, sys, subprocess, json, csv, stat
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input
 
 # Get version if not already gotten
-try:
-    import lib.version as version
-except:
-    subprocess.Popen([sys.executable, 'update_version.py']).wait()
-    import lib.version as version
+#try:
+#    import lib.version as version
+#except:
+#    subprocess.Popen([sys.executable, 'update_version.py']).wait()
+#    import lib.version as version
 
 # TODO :
 # Add comment about how python subprocess gets module
