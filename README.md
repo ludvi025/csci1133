@@ -80,22 +80,47 @@ allow for either case of the last letter.
 
 ### Test scripts
 When prompted to enter tests to run against student homework, enter one or more
-paths to python scripts that should be run against the submission. Student code
-is contained in a python module named `student_module` so to call a function 
-name `unittest()` that should have been defined by the student would look like:
+paths to python scripts that should be run against the submission. A separate
+instance of python will be created in interpretive mode and the student's code 
+imported into the global namespace. The lines from the test script will be piped
+into the new instance of python, allowing you to both call functions and pass
+input into them.
 
-    student_module.unittest()
+For example, if students' were to define a function such as:
 
-or something more flexible:
+    def foo(a,b):
+        return a+b
 
-    try:
-        student_module.unittest()
-    except:
-        try:
-            student_module.unitTest()
-        except:
-            pass
+An example test script would be:
 
+    print('Calling `foo(5,4)`. Expecting `9`')
+    print(foo(5, 4))
+
+For another example, if students' were to take input from the user such as:
+    
+    def getInput():
+        s = input('> ')
+        print(s)
+
+An example test script would be:
+
+    print('Calling `getInput()` and piping in `Apple`')
+    getInput()
+    Apple
+
+This is acceptable because the script is piped one line at a time into the new
+interpreter. Because of this, testing scripts can also be written for scripts
+that do not have functions or ask for input immediately upon import. For example, 
+if the student's code looks like:
+
+    s = input('Enter a number: ')
+    print(int(s) + 1)
+
+An example test script would be:
+
+    5
+    print('Entered `5`. Expected `6`')
+     
 ### 'Enter python shell?'
 After running the test scripts and dumping the file contents, the script asks if
 you would like to 'Enter a python shell (y/n)?'. Entering 'y' will open an interactive
