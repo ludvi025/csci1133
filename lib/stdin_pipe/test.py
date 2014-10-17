@@ -1,4 +1,2 @@
-11
-12
-doSomeStuff(5,6)
-doSomeStuff(8,9)
+print('Calling foo(5)')
+print(foo(5))
