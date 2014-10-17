@@ -19,7 +19,7 @@ def main():
 
     # Print welcome art and version
     print(art.art)
-    print("Version: {}\n".format(version.version).rjust(55))
+    # print("Version: {}\n".format(version.version).rjust(55))
 
     # Remember sessions
     session_name = input("Enter session name: ")
