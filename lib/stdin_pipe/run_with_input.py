@@ -2,7 +2,7 @@ from subprocess import Popen, PIPE, STDOUT
 import sys
 
 def run(script, user_input):
-    p = Popen([sys.executable, script], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+    p = Popen([sys.executable, script], stdout=PIPE, stdin=PIPE, stderr=PIPE)
     out, err = p.communicate(input=user_input.encode('utf-8'))
     if out:
         out = out.decode('utf-8')
@@ -11,7 +11,7 @@ def run(script, user_input):
     return out, err
 
 def runInteractive(script, user_input):
-    p = Popen([sys.executable, '-i', script], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+    p = Popen([sys.executable, '-i', script], stdout=PIPE, stdin=PIPE, stderr=PIPE)
     out, err = p.communicate(input=user_input.encode('utf-8'))
     if out:
         out = out.decode('utf-8')
