@@ -286,44 +286,34 @@ Loading module and calling supplied tests
             print(out)
             print('Errors from', test, '\n------')
             print(err)
+            print()
 
-#        try:
-#            stud_mod = importScript(file_path)
-#        except:
-#            mod_load_error = True
-#            print('Failed to load module',file_path)
-#            print('Error info:')
-#            for err in sys.exc_info():
-#                print(err)
-#
-#        if not mod_load_error:
-#            for test in tests:
-#                print('\nRunning test:',test,': ')
-#                print('----Test Output----')
-#                try:
-#                    callTest(test,stud_mod)
-#                except:
-#                    print('Failed to call',test)
-#                print('Error info:')
-#                for err in sys.exc_info():
-#                    print(err)
-#                print('-------------------\n')
+        play_again = input('Load interactive python shell (y/n)? ').lower() == 'y'
+
     else:
+        play_again = True
+
+    if play_again:
+        print('\n-----')
         print('Loading student module in separate instance of python.')
         print('Press Ctrl+D to return to grading script when finished.')
         print('Hint: If the student does not call their function, type')
         print('run the function dir() at the python prompt to see what')
         print('it\'s called.')
-        play_again = True
-        while play_again: 
-            current_dir = os.getcwd()
-            file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
-            file_name = file_path.split(getJoinStr())[-1]
-            print(file_dir, file_name)
-            os.chdir(file_dir)
-            subprocess.call([sys.executable,'-i',file_name])
-            os.chdir(current_dir)
-            play_again = True if input('Reload module? ').lower() == 'y' else False
+        print('-----\n')
+
+    while play_again: 
+        loadShell(file_path)
+        play_again = input('Reload module? ').lower() == 'y'
+
+def loadShell(file_path):
+    current_dir = os.getcwd()
+    file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
+    file_name = file_path.split(getJoinStr())[-1]
+    print(file_dir, file_name)
+    os.chdir(file_dir)
+    subprocess.call([sys.executable,'-i',file_name])
+    os.chdir(current_dir)
 
 def cleanupIncompletes(grade_file_name):
     files = rfind.find(grade_file_name, '.')
