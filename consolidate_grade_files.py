@@ -42,6 +42,8 @@ def consolidateGrades(file_name, grade_file_name, user_ids=None):
                     else:
                         uid = "#######"
                     record = [uid] + record
+                else:
+                    record = ["#######"] + record
 
                 cout.writerow(record)
         print('.',end='')
