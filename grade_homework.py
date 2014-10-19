@@ -286,8 +286,9 @@ Loading module and calling supplied tests
             err = err.replace('>>>','\n').replace('...','\n')
             print('Output from', test, '\n------')
             print(out)
-            print('Errors from', test, '\n------')
-            print(err)
+            if not err.replace('\n','').replace(' ','')=='':
+                print('Errors from', test, '\n------')
+                print(err)
             print()
 
         play_again = input('Load interactive python shell (y/n)? ').lower() == 'y'
