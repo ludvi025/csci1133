@@ -6,7 +6,7 @@ import os.path
 
 
 def get_version():
-    # Chdir to the location of this file (hopefully git repo)
+    # Chdir to the location of this file (hopefully the git repo)
     olddir = os.getcwd()
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     # Call git for the versioning
