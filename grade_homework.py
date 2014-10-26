@@ -17,6 +17,9 @@ IGNORE = "__MACOSX"
 
 def main():
 
+    # Change umask to allow group read/write files
+    os.umask(0o007)
+    
     # Print welcome art and version
     print(art.art)
     # print("Version: {}\n".format(version.version).rjust(55))
@@ -107,7 +110,6 @@ def writeSession(name, patterns, tests, maxpoints):
     fout.write(json.dumps(tests)+'\n')
     fout.write(json.dumps(maxpoints)+'\n')
     fout.close()
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
 def getJoinStr():
     return os.path.join('.','.')[1:-1]
@@ -163,7 +165,6 @@ File contents:
     fout = open(fn,'w')
     fout.write('Grading unfinished for: ' + file_path)
     fout.close()
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
@@ -263,7 +264,6 @@ File contents:
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
     print('Done')
 
