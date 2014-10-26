@@ -67,8 +67,8 @@ def main():
             idx = student_files.index(file) 
             remaining = last_file - idx
             if idx != last_file:
-                cont = str(input(str(remaining) + " files remaining... Grade another? "))
-                if cont.lower() != 'y':
+                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
+                if cont:
                     break
                 else:
                     gradeHomework(file,tests,maxpoints,grade_file_name)
@@ -77,8 +77,8 @@ def main():
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
-    incomplete_check = input("Check for incomplete grade files (y/n)? ")
-    if incomplete_check.lower() == "y":
+    incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
+    if incomplete_check:
         files_found = cleanupIncompletes(grade_file_name)
         if len(files_found) > 0:
             print("Found and removed the following unfinished files:")
@@ -233,9 +233,9 @@ File contents:
     print('Last name : ', stud_info['lastname'])
     print('Moodle id : ', stud_info['moodleid'])
     print('------------')
-    change_info = input('Change? ')
+    change_info = get_input.yes_or_no('Change?')
 
-    if change_info.lower() == 'y':
+    if change_info:
         print('\n----------------------------------')
         stud_info['firstname'] = input('Enter first name: ')
         stud_info['lastname'] = input('Enter last name: ')
@@ -280,7 +280,7 @@ Loading module and calling supplied tests
                 print(err)
             print()
 
-        play_again = input('Load interactive python shell (y/n)? ').lower() == 'y'
+        play_again = get_input.yes_or_no('Load interactive python shell?')
 
     else:
         play_again = True
@@ -296,7 +296,7 @@ Loading module and calling supplied tests
 
     while play_again: 
         loadShell(file_path)
-        play_again = input('Reload module? ').lower() == 'y'
+        play_again = get_input.yes_or_no('Reload module?')
 
 def loadShell(file_path):
     current_dir = os.getcwd()

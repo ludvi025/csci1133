@@ -12,8 +12,15 @@ def get_witty_comeback():
     return witty_combacks[randint(0, len(witty_comebacks)-1)]
 
 
-def yes(prompt_string):
-    pass
+def yes_or_no(prompt_string):
+    """Returns true for an affirmatory input by appending " (y/n): " on to the
+    prompt string. See functin definition for what counts as affirmatory. This
+    function tends towards a whitelist of confirmation actions."""
+    prompt_string += ' (y/n): '
+    yesses = ['y', 'yes']
+
+    result = input(prompt_string)
+    return (result.lower() in yesses)
 
 
 def grade(maxpoints):
