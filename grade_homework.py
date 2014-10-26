@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, stat
 
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input
 
 # Get version if not already gotten
 #try:
@@ -243,15 +243,7 @@ File contents:
         print('----------------------------------')
             
     print('\n----------------------------------')
-    grade = -1
-    if maxpoints == -1:
-        maxpoints = float('inf')
-    while (grade > maxpoints) or (grade < 0):
-        gradestr = input('Enter grade: ')
-        try:
-            grade = float(gradestr)
-        except ValueError:
-            print("Not a valid grade. You're smarter than that...")
+    grade = get_input.grade(maxpoints)
     comments = str(input('Enter comments: '))
     print('----------------------------------')
 
