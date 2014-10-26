@@ -5,6 +5,7 @@ from random import randint
 witty_comebacks = [
     "You're smarter than that...",
     "And you think you're good enough to be a TA?",
+    "The hard part is doing the homework, not grading it..."
 ]
 
 
@@ -17,7 +18,7 @@ def yes_or_no(prompt_string):
     prompt string. See functin definition for what counts as affirmatory. This
     function tends towards a whitelist of confirmation actions."""
     prompt_string += ' (y/n): '
-    yesses = ['y', 'yes']
+    yesses = ['y', 'yes', 'yep', 'yeah']
 
     result = input(prompt_string)
     return (result.lower() in yesses)
@@ -31,6 +32,8 @@ def grade(maxpoints):
         gradestr = input('Enter grade: ')
         try:
             grade = float(gradestr)
+            if grade < 0:
+                print("Not a valid grade.", get_witty_comeback())
         except ValueError:
             print("Not a valid grade.", get_witty_comeback())
     return grade
