@@ -37,10 +37,7 @@ def main():
 
         print("Enter the maximum point value for the assignment to verify that students are not given extra credit.")
         maxpoints = input("> ")
-        if maxpoints != '':
-            maxpoints = float(maxpoints)
-        else:
-            maxpoints = -1
+        maxpoints = float(maxpoints) if maxpoints != '' else -1
 
         writeSession(session_name, patterns, tests, maxpoints)
     else:
