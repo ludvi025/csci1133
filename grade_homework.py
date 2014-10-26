@@ -1,14 +1,7 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, stat
 
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input
-
-# Get version if not already gotten
-#try:
-#    import lib.version as version
-#except:
-#    subprocess.Popen([sys.executable, 'update_version.py']).wait()
-#    import lib.version as version
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -22,7 +15,7 @@ def main():
     
     # Print welcome art and version
     print(art.art)
-    # print("Version: {}\n".format(version.version).rjust(55))
+    print("Version: {}\n".format(version.version).rjust(55))
 
     # Remember sessions
     session_name = input("Enter session name: ")
