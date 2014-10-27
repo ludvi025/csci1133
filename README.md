@@ -158,18 +158,3 @@ Consolidates [input-files] grading files from individual files into a single fil
     Options:
     --output (-o) : File to write consolidated gradebook to.
     --key (-k)    : Key used to identify students. Defaults to "Moodle id".
-
-## update_version.py
-
-Generates a new `lib/version.py` file so that someone who runs the script may see
-what version of the grading scripts they are using, regardless of which directory
-they are in.
-
-The `grade_homework` script will fail to execute if this has not been run at
-least once since the initial `git clone`.
-
-### Usage:
-
-    python update_version.py
-
-__Note:__ requires manual execution upon each `git pull` of the repo.
