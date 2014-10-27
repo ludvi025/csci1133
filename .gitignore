@@ -2,5 +2,4 @@ __pycache__
 *.sublime-project
 *.sublime-workspace
 vs2013/
-lib/version.py
 testing/*

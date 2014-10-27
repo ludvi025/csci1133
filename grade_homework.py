@@ -1,14 +1,7 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, subprocess, json, csv, stat
+import os, imp, importlib, sys, subprocess, json, csv
 
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input
-
-# Get version if not already gotten
-#try:
-#    import lib.version as version
-#except:
-#    subprocess.Popen([sys.executable, 'update_version.py']).wait()
-#    import lib.version as version
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -17,9 +10,12 @@ IGNORE = "__MACOSX"
 
 def main():
 
+    # Change umask to allow group read/write files
+    os.umask(0o007)
+    
     # Print welcome art and version
     print(art.art)
-    # print("Version: {}\n".format(version.version).rjust(55))
+    print("Version: {}\n".format(version.get_version()).rjust(55))
 
     # Remember sessions
     session_name = input("Enter session name: ")
@@ -34,10 +30,7 @@ def main():
 
         print("Enter the maximum point value for the assignment to verify that students are not given extra credit.")
         maxpoints = input("> ")
-        if maxpoints != '':
-            maxpoints = float(maxpoints)
-        else:
-            maxpoints = -1
+        maxpoints = float(maxpoints) if maxpoints != '' else -1
 
         writeSession(session_name, patterns, tests, maxpoints)
     else:
@@ -67,8 +60,8 @@ def main():
             idx = student_files.index(file) 
             remaining = last_file - idx
             if idx != last_file:
-                cont = str(input(str(remaining) + " files remaining... Grade another? "))
-                if cont.lower() != 'y':
+                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
+                if cont:
                     break
                 else:
                     gradeHomework(file,tests,maxpoints,grade_file_name)
@@ -77,8 +70,8 @@ def main():
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
-    incomplete_check = input("Check for incomplete grade files (y/n)? ")
-    if incomplete_check.lower() == "y":
+    incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
+    if incomplete_check:
         files_found = cleanupIncompletes(grade_file_name)
         if len(files_found) > 0:
             print("Found and removed the following unfinished files:")
@@ -107,7 +100,6 @@ def writeSession(name, patterns, tests, maxpoints):
     fout.write(json.dumps(tests)+'\n')
     fout.write(json.dumps(maxpoints)+'\n')
     fout.close()
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
 def getJoinStr():
     return os.path.join('.','.')[1:-1]
@@ -163,7 +155,6 @@ File contents:
     fout = open(fn,'w')
     fout.write('Grading unfinished for: ' + file_path)
     fout.close()
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
@@ -235,9 +226,9 @@ File contents:
     print('Last name : ', stud_info['lastname'])
     print('Moodle id : ', stud_info['moodleid'])
     print('------------')
-    change_info = input('Change? ')
+    change_info = get_input.yes_or_no('Change?')
 
-    if change_info.lower() == 'y':
+    if change_info:
         print('\n----------------------------------')
         stud_info['firstname'] = input('Enter first name: ')
         stud_info['lastname'] = input('Enter last name: ')
@@ -245,15 +236,7 @@ File contents:
         print('----------------------------------')
             
     print('\n----------------------------------')
-    grade = -1
-    if maxpoints == -1:
-        maxpoints = float('inf')
-    while (grade > maxpoints) or (grade < 0):
-        gradestr = input('Enter grade: ')
-        try:
-            grade = float(gradestr)
-        except ValueError:
-            print("Not a valid grade. You're smarter than that...")
+    grade = get_input.grade(maxpoints)
     comments = str(input('Enter comments: '))
     print('----------------------------------')
 
@@ -262,9 +245,7 @@ File contents:
     with open(fn, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
-                            stud_info['lastname'], grade, comments.strip('\\'), os.getlogin()])
-    os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
-
+                            stud_info['lastname'], grade, comments, os.getlogin()])
     print('Done')
 
 def getStudentInfo(file_path):
@@ -291,7 +272,7 @@ Loading module and calling supplied tests
                 print(err)
             print()
 
-        play_again = input('Load interactive python shell (y/n)? ').lower() == 'y'
+        play_again = get_input.yes_or_no('Load interactive python shell?')
 
     else:
         play_again = True
@@ -307,7 +288,7 @@ Loading module and calling supplied tests
 
     while play_again: 
         loadShell(file_path)
-        play_again = input('Reload module? ').lower() == 'y'
+        play_again = get_input.yes_or_no('Reload module?')
 
 def loadShell(file_path):
     current_dir = os.getcwd()
