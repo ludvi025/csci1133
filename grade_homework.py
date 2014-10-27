@@ -262,7 +262,7 @@ File contents:
     with open(fn, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
-                            stud_info['lastname'], grade, comments, os.getlogin()])
+                            stud_info['lastname'], grade, comments.strip('\\'), os.getlogin()])
     os.chmod(fn, (os.stat(fn).st_mode & (stat.S_IRWXU | stat.S_IRWXG)) | stat.S_IRGRP | stat.S_IWGRP)
 
     print('Done')
