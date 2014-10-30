@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+#some stuff
+
 import os, imp, importlib, sys, subprocess, json, csv
 
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
