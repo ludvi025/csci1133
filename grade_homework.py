@@ -219,8 +219,10 @@ Loading module and calling supplied tests
     if tests:
         for test in tests:
             out, err = run_with_input.runInteractive(file_path, open(test).read())
-            out = out.replace('>>>','\n').replace('...','\n')
-            err = err.replace('>>>','\n').replace('...','\n')
+            if out:
+                out = out.replace('>>>','\n').replace('...','\n')
+            if err:
+                err = err.replace('>>>','\n').replace('...','\n')
             print('Output from', test, '\n------')
             print(out)
             if not err.replace('\n','').replace(' ','')=='':
