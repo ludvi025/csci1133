@@ -237,7 +237,7 @@ File contents:
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
-    comments = str(input('Enter comments: '))
+    comments = str(input('Enter comments: ')).strip('\\')
     print('----------------------------------')
 
     print('Writing to file...',end='')
