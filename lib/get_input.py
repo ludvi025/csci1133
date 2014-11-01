@@ -10,7 +10,7 @@ witty_comebacks = [
 
 
 def get_witty_comeback():
-    return witty_combacks[randint(0, len(witty_comebacks)-1)]
+    return witty_comebacks[randint(0, len(witty_comebacks)-1)]
 
 
 def yes_or_no(prompt_string):
