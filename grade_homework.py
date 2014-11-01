@@ -190,14 +190,6 @@ File contents:
     print('Last name : ', stud_info['lastname'])
     print('Moodle id : ', stud_info['moodleid'])
     print('------------')
-    change_info = get_input.yes_or_no('Change?')
-
-    if change_info:
-        print('\n----------------------------------')
-        stud_info['firstname'] = input('Enter first name: ')
-        stud_info['lastname'] = input('Enter last name: ')
-        stud_info['moodleid'] = input('Enter moodle id: ')
-        print('----------------------------------')
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
