@@ -62,9 +62,9 @@ def main():
             if idx != last_file:
                 cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
                 if cont:
-                    break
-                else:
                     gradeHomework(file,tests,maxpoints,grade_file_name)
+                else:
+                    break
             else:
                 print("No more homework to grade.\n")
         else:
