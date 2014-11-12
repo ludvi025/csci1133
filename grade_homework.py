@@ -62,9 +62,9 @@ def main():
             if idx != last_file:
                 cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
                 if cont:
-                    break
-                else:
                     gradeHomework(file,tests,maxpoints,grade_file_name)
+                else:
+                    break
             else:
                 print("No more homework to grade.\n")
         else:
@@ -168,7 +168,6 @@ File contents:
     else:
         runTests(tests, file_path)
 
-
     # Display the contents of the student's homework file
     # for manual inspection and partial credit. Displays 
     # with line numbers for easy reference.
@@ -181,41 +180,6 @@ File contents:
     for i in range(len(contents)):
         print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
     print('\n')
-
-#    edit_file = 'y'
-#    while edit_file.lower() == 'y':
-#        # Offer to drop into a python shell in the student directory
-#        drop_in = str(input("Enter a python shell (y/n) ? "))
-#        if drop_in.lower() == 'y':
-#            current_dir = os.getcwd()
-#            os.chdir(file_dir)
-#            subprocess.call(['python3','-i',file_name])
-#            os.chdir(current_dir)
-#
-#        # Offer to edit student submission for testing
-#        edit_file = str(input("Edit the file (y/n) ? "))
-#        if edit_file.lower() == 'y':
-#            current_dir = os.getcwd()
-#            os.chdir(file_dir)
-#
-#            # TODO: Bad editor sends back to 'use python?' prompt.
-#            valid_editor = False
-#            while not valid_editor:
-#                editor = str(input("Which editor to use? "))
-#                try:
-#                    subprocess.call([editor,file_name])
-#                    valid_editor = True
-#                except:
-#                    try_again = input("Error calling editor. Try again? ")
-#                    if try_again.lower != 'y':
-#                        valid_editor = True
-#
-#            os.chdir(current_dir)
-#
-#            run_tests_again = input("Run tests again? ")
-#            if run_tests_again:
-#                runTests(tests, file_path)
-
     print('\nFile: ',file_path)
 
     # Attempt to get student info from file path
@@ -226,18 +190,10 @@ File contents:
     print('Last name : ', stud_info['lastname'])
     print('Moodle id : ', stud_info['moodleid'])
     print('------------')
-    change_info = get_input.yes_or_no('Change?')
-
-    if change_info:
-        print('\n----------------------------------')
-        stud_info['firstname'] = input('Enter first name: ')
-        stud_info['lastname'] = input('Enter last name: ')
-        stud_info['moodleid'] = input('Enter moodle id: ')
-        print('----------------------------------')
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
-    comments = str(input('Enter comments: '))
+    comments = str(input('Enter comments: ')).strip('\\')
     print('----------------------------------')
 
     print('Writing to file...',end='')
@@ -263,8 +219,10 @@ Loading module and calling supplied tests
     if tests:
         for test in tests:
             out, err = run_with_input.runInteractive(file_path, open(test).read())
-            out = out.replace('>>>','\n').replace('...','\n')
-            err = err.replace('>>>','\n').replace('...','\n')
+            if out:
+                out = out.replace('>>>','\n').replace('...','\n')
+            if err:
+                err = err.replace('>>>','\n').replace('...','\n')
             print('Output from', test, '\n------')
             print(out)
             if not err.replace('\n','').replace(' ','')=='':
