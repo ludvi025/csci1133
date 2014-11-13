@@ -221,21 +221,14 @@ File contents:
     print('\nFile: ',file_path)
 
     # Attempt to get student info from file path
-    stud_info = getStudentInfo(file_path)
+   stud_info = getStudentInfo(file_path)
         
-    print('\nStudent info\n------------')
-    print('First name: ', stud_info['firstname'])
-    print('Last name : ', stud_info['lastname'])
-    print('Moodle id : ', stud_info['moodleid'])
-    print('------------')
+    printStudentInfo(stud_info)
+
     change_info = get_input.yes_or_no('Change?')
 
     if change_info:
-        print('\n----------------------------------')
-        stud_info['firstname'] = input('Enter first name: ')
-        stud_info['lastname'] = input('Enter last name: ')
-        stud_info['moodleid'] = input('Enter moodle id: ')
-        print('----------------------------------')
+        changeStudentInfo(stud_info)
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
@@ -249,6 +242,20 @@ File contents:
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
     print('Done')
+
+def changeStudentInfo(info):
+    print('\n----------------------------------')
+    info['firstname'] = input('Enter first name: ')
+    info['lastname'] = input('Enter last name: ')
+    info['moodleid'] = input('Enter moodle id: ')
+    print('----------------------------------')
+    
+def printStudentInfo(info):
+     print('\nStudent info\n------------')
+     print('First name: ', info['firstname'])
+     print('Last name : ', info['lastname'])
+     print('Moodle id : ', info['moodleid'])
+     print('------------')
 
 def getStudentInfo(file_path):
     return sub_parser.parse(file_path)
