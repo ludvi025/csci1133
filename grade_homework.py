@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, subprocess, json, csv
+import os, imp, importlib, sys, subprocess, json, csv, signal
 
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
 
@@ -254,7 +254,13 @@ def loadShell(file_path):
     file_name = file_path.split(getJoinStr())[-1]
     print(file_dir, file_name)
     os.chdir(file_dir)
+    # Store the original handler and set a new one
+    original_sigint = signal.getsignal(signal.SIGINT)
+    signal.signal(signal.SIGINT, _graceful_handler)
+    # Call the student code
     subprocess.call([sys.executable,'-i',file_name])
+    # Restore the handler
+    signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
 
 def cleanupIncompletes(grade_file_name):
