@@ -2,7 +2,7 @@ from enum import Enum   # Available in Python 3.4+
 
 
 
-class _enum(Enum):
+class options(Enum):
     """Gives the option to either check all grade files for unfinished
     grading, or check all grade files for unfinished and in progress 
     grading."""
@@ -13,26 +13,26 @@ class _enum(Enum):
 
 
 _ShortNames = {
-    _enum.UnfinishedOnly:   "Unfinished grade files only",
-    _enum.AllIncomplete:    "Unfinished and in progress grade files",
-    _enum.PrintHelpText:    "Print help text",
-    _enum.GoToMain:         "Go to the main menu",
+    options.UnfinishedOnly:   "Unfinished grade files only",
+    options.AllIncomplete:    "Unfinished and in progress grade files",
+    options.PrintHelpText:    "Print help text",
+    options.GoToMain:         "Go to the main menu",
 }
 
 
 _Explanations = {
-    _enum.UnfinishedOnly: 
+    options.UnfinishedOnly: 
 """Will find and delete any grade files that contain the phrase "Grading \
 unfinished for" in them (which would indicate that the grader killed the \
 grading script while grading a homework).""",
-    _enum.AllIncomplete:
+    options.AllIncomplete:
 """In addition to removing the unfinished grading files, this option will also \
 remove and grade files that contain the phrase "Grading in progress for" in \
 them (which will only happen while someone is grading a file or something went \
 horribly wrong).""",
-    _enum.PrintHelpText:
+    options.PrintHelpText:
 """Unsurprisingly, print this help text.""",
-    _enum.GoToMain:
+    options.GoToMain:
 """Go back to the main menu.""",
 }
 

@@ -2,7 +2,7 @@ from enum import Enum   # Available in Python 3.4+
 # An example interface for all of the other menu modules
 
 
-class _enum(Enum):
+class options(Enum):
     # The enum to define all the elements of this menu
     pass
 
