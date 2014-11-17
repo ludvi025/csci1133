@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, signal
 
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.get_input as get_input, lib.version as version
+import lib.stdin_pipe.run_with_input as run_with_input
 import lib.menu.main_menu as menu_main, lib.menu.grade_homeworks as menu_grade, lib.menu.check_grade_files as menu_cleanup
+import lib.grade_files.cleanup as grade_file_cleanup
 
 # TODO :
 # Add comment about how python subprocess gets module
