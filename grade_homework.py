@@ -256,12 +256,16 @@ def loadShell(file_path):
     os.chdir(file_dir)
     # Store the original handler and set a new one
     original_sigint = signal.getsignal(signal.SIGINT)
-    signal.signal(signal.SIGINT, _ctrlc_handler)
+    def handler(signum, frame):
+        print("\n\033[91mLooks like you pushed Ctrl-C. Handler removed.\033[0m")
+        signal.signal(signal.SIGINT, original_sigint)
+    signal.signal(signal.SIGINT, handler)
     # Call the student code
     subprocess.call([sys.executable,'-i',file_name])
     # Restore the handler
     signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
+
 
 def cleanupIncompletes(grade_file_name):
     files = rfind.find(grade_file_name, '.')
@@ -273,9 +277,6 @@ def cleanupIncompletes(grade_file_name):
                 f.close()
                 os.remove(fn)
     return found_files
-
-def _ctrlc_handler(signum, frame):
-    print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m")
 
 
 if __name__ == "__main__":
