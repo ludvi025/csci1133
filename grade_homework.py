@@ -2,6 +2,7 @@
 import os, imp, importlib, sys, subprocess, json, csv, signal
 
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
+import lib.menu.main_menu as menu_main, lib.menu.grade_homeworks as menu_grade, lib.menu.check_grade_files as menu_cleanup
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -44,6 +45,7 @@ def main():
     else:
         grade_file_name = 'grade.csv'
 
+    # Get the list of student files to grade
     student_files = []
     for pattern in patterns:
         files = rfind.find(pattern,'.',IGNORE)
@@ -51,6 +53,33 @@ def main():
             if f not in student_files:
                 student_files.append(f)
 
+    # Main menu
+    menu_main.print_menu()
+    opt = menu_main.get_option()
+    while opt != menu_main.options.TerminateProgram:
+
+        if opt == menu_main.options.GradeHomeworks:
+            #gradeHomeworks()
+            print("Not yet implemented")
+
+        elif opt == menu_main.options.CheckGradeFiles:
+            #checkGradeFiles()
+            print("Not yet implemented")
+
+        elif opt == menu_main.options.GradingStatistics:
+            #printStatistics()
+            print("Not yet implemented")
+
+        elif opt == menu_main.options.ConsolidateGrades:
+            #consolidateGradeFiles()
+            print("Not yet implemented")
+
+        else:
+            print("You somehow got an impossible option:", opt)
+
+        opt = menu_main.get_option()
+
+                
     # For each homework file, grade it
     last_file = len(student_files)
     for file in student_files:
