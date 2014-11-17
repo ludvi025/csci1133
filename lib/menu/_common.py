@@ -1,6 +1,6 @@
 # Not to be included by modules other than the menu submodules
 
-def _print_menu_common(dec, name, optenum, options):
+def common_print_menu(dec, name, optenum, options):
     print()
     print(dec*80)
     print(dec + name.center(78) + dec)
@@ -17,11 +17,11 @@ def _print_menu_common(dec, name, optenum, options):
     print()
 
 
-def _print_help_menu_common(name, optenum, options):
-    _print_menu_common('?', name, optenum, options)
+def common_print_help_menu(name, optenum, options):
+    common_print_menu('?', name, optenum, options)
 
 
-def _get_option_common(optenum):
+def common_get_option(optenum):
     opt = None
     while True:
         try:

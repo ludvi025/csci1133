@@ -44,18 +44,18 @@ file. Will then select the next file and enter this menu again.""",
 
 
 def print_menu():
-    _print_menu_common('#', 'Grade Homeworks', options, _ShortNames)
+    common_print_menu('#', 'Grade Homeworks', options, _ShortNames)
 
 
 def print_help_menu():
-    _print_help_menu_common('Grade Homeworks Extended Help', options, _Explanations)
+    common_print_help_menu('Grade Homeworks Extended Help', options, _Explanations)
 
 
 def get_option(printmenu=False):
     if printmenu:
         print_menu()
-    opt = _get_option_common(options)
+    opt = common_get_option(options)
     while opt == options.PrintHelpText:
         print_help_menu()
-        opt = _get_option_common(options)
+        opt = common_get_option(options)
     return opt

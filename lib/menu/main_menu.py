@@ -48,18 +48,18 @@ mashing Ctrl-C like a monkey with a bone after encountering a monolith.""",
 
 
 def print_menu():
-    _print_menu_common('@', 'Main Menu', options, _ShortNames)
+    common_print_menu('@', 'Main Menu', options, _ShortNames)
 
 
 def print_help_menu():
-    _print_help_menu_common('Main Menu Extended Help', options, _Explanations)
+    common_print_help_menu('Main Menu Extended Help', options, _Explanations)
 
 
 def get_option(printmenu=False):
     if printmenu:
         print_menu()
-    opt = _get_option_common(options)
+    opt = common_get_option(options)
     while opt == options.PrintHelpText:
         print_help_menu()
-        opt = _get_option_common(options)
+        opt = common_get_option(options)
     return opt
