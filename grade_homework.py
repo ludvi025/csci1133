@@ -153,6 +153,13 @@ File contents:
     file_list = os.listdir(file_dir)
 
     fn = file_dir+'/'+grade_file_name
+
+    # Check if grade file exists (will happen when the grader dawdles too long
+    # on the Grade another? prompt)
+    if os.path.isfile(fn):
+        print("Looks like you dawdled too long on wanting to grade another.")
+        return
+
     fout = open(fn,'w')
     fout.write('Grading in progress for: ' + file_path)
     fout.close()
