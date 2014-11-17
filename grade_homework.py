@@ -151,14 +151,20 @@ File contents:
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
     file_list = os.listdir(file_dir)
 
+    # --- writeFlag() ---
     fn = file_dir+'/'+grade_file_name
     fout = open(fn,'w')
     fout.write('Grading unfinished for: ' + file_path)
     fout.close()
+    # ---
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
     file_name = file_path.split(getJoinStr())[-1]
+
+    ## -- Menu Option #1 and #2 -- ##
+    ## #1 - Run supplied tests (checks to see if any)
+    ## #2 - Enter interactive shell
 
     # We can pipe the lines of a script to a subprocess
     # running their script.
@@ -167,6 +173,9 @@ File contents:
         pass
     else:
         runTests(tests, file_path)
+    ## -- End #1 and #2 -- ##
+
+    ## -- Menu Option #3 -- ##
 
     # Display the contents of the student's homework file
     # for manual inspection and partial credit. Displays 
@@ -181,6 +190,10 @@ File contents:
         print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
     print('\n')
     print('\nFile: ',file_path)
+    ## -- End #3 -- ##
+
+    ## -- Menu Option #4 -- ##
+    ## Enter Grade ##
 
     # Attempt to get student info from file path
     stud_info = getStudentInfo(file_path)
@@ -203,6 +216,7 @@ File contents:
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
     print('Done')
+    ## -- End #4 -- ##
 
 def getStudentInfo(file_path):
     return sub_parser.parse(file_path)
