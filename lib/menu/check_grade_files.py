@@ -40,14 +40,14 @@ something went horribly wrong).""",
 
 
 def print_menu():
-    print_menu_common('#', 'Check Grade Files', options, _ShortNames)
+    _print_menu_common('#', 'Check Grade Files', options, _ShortNames)
 
 
 def print_help_menu():
-    print_help_menu_common('Check Grade Files Extended Help', options, _Explanations)
+    _print_help_menu_common('Check Grade Files Extended Help', options, _Explanations)
 
 
 def get_option(printmenu=False):
     if printmenu:
         print_menu()
-    return get_option_common(options)
+    return _get_option_common(options)
