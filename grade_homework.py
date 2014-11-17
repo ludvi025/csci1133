@@ -65,8 +65,8 @@ def main():
             print("Not yet implemented")
 
         elif opt == menu_main.options.CheckGradeFiles:
-            #checkGradeFiles()
-            print("Not yet implemented")
+            checkGradeFiles(grade_file_name)
+            menu_main.print_menu()
 
         elif opt == menu_main.options.GradingStatistics:
             #printStatistics()
@@ -101,17 +101,26 @@ def main():
         else:
             print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
-    incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
-    if incomplete_check:
-        inprogress_check = get_input.yes_or_no("Check for in progress grade files?")
-        files_found = cleanupIncompletes(grade_file_name, inprogress_check)
-        if len(files_found) > 0:
-            print("Found and removed the following files:")
-            for fn in files_found:
-                print(fn)
-            print("Rerun the grading script to grade these again before consolidating.")
-
     print("Grading session complete.")
+
+
+def checkGradeFiles(grade_file_name):
+    menu_cleanup.print_menu()
+    opt = menu_cleanup.get_option()
+
+    while opt != menu_cleanup.options.GoToMain:
+
+        if opt == menu_cleanup.options.UnfinishedOnly:
+            grade_file_cleanup.RemoveUnfinished(grade_file_name)
+
+        elif opt == menu_cleanup.options.InProgressOnly:
+            grade_file_cleanup.RemoveInProgress(grade_file_name)
+
+        else:
+            print("You somehow got an impossible option.")
+
+        opt = menu_cleanup.get_option()
+
 
 def getSession(name):
     file_name = name+'.session'
@@ -318,19 +327,6 @@ def loadShell(file_path):
     # Restore the handler
     signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
-
-
-def cleanupIncompletes(grade_file_name, inprogress_check):
-    files = rfind.find(grade_file_name, '.')
-    found_files = []
-    for fn in files:
-        with open(fn, 'r') as f:
-            filetext = f.read()
-        if ("Grading unfinished for" in filetext or
-            (inprogress_check and "Grading in progress for" in filetext)):
-            found_files.append(fn)
-            os.remove(fn)
-    return found_files
 
 
 if __name__ == "__main__":
