@@ -52,7 +52,7 @@ def print_menu():
 
 
 def print_help_menu():
-    pass
+    print_help_menu_common('Main Menu Extended Help', options, _Explanations)
 
 
 def get_option(printmenu=False):
