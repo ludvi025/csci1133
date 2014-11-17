@@ -72,9 +72,10 @@ def main():
 
     incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
     if incomplete_check:
-        files_found = cleanupIncompletes(grade_file_name)
+        inprogress_check = get_input.yes_or_no("Check for in progress grade files?")
+        files_found = cleanupIncompletes(grade_file_name, inprogress_check)
         if len(files_found) > 0:
-            print("Found and removed the following unfinished files:")
+            print("Found and removed the following files:")
             for fn in files_found:
                 print(fn)
             print("Rerun the grading script to grade these again before consolidating.")
@@ -153,8 +154,18 @@ File contents:
 
     fn = file_dir+'/'+grade_file_name
     fout = open(fn,'w')
-    fout.write('Grading unfinished for: ' + file_path)
+    fout.write('Grading in progress for: ' + file_path)
     fout.close()
+
+    # Register a signal handler to wrap around the grading for the in progress
+    # race condition
+    original_sigint = signal.getsignal(signal.SIGINT)
+    def handler(signum, frame):
+        with open(fn,'w') as fout:
+            fout.write('Grading unfinished for: ' + file_path)
+        print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m\nGrading file {} marked as unfinished, and terminating grading script.".format(fn))
+        sys.exit()
+    signal.signal(signal.SIGINT, handler)
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
@@ -202,6 +213,7 @@ File contents:
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
+    signal.signal(signal.SIGINT, original_sigint)
     print('Done')
 
 def getStudentInfo(file_path):
@@ -267,15 +279,16 @@ def loadShell(file_path):
     os.chdir(current_dir)
 
 
-def cleanupIncompletes(grade_file_name):
+def cleanupIncompletes(grade_file_name, inprogress_check):
     files = rfind.find(grade_file_name, '.')
     found_files = []
     for fn in files:
         with open(fn, 'r') as f:
-            if "Grading unfinished for" in f.read():
-                found_files.append(fn)
-                f.close()
-                os.remove(fn)
+            filetext = f.read()
+        if ("Grading unfinished for" in filetext or
+            (inprogress_check and "Grading in progress for" in filetext)):
+            found_files.append(fn)
+            os.remove(fn)
     return found_files
 
 
