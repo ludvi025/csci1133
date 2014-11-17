@@ -50,4 +50,8 @@ def print_help_menu():
 def get_option(printmenu=False):
     if printmenu:
         print_menu()
-    return _get_option_common(options)
+    opt = _get_option_common(options)
+    while opt == options.PrintHelpText:
+        print_help_menu()
+        opt = _get_option_common(options)
+    return opt
