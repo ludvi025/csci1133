@@ -61,8 +61,8 @@ def main():
     while opt != menu_main.options.TerminateProgram:
 
         if opt == menu_main.options.GradeHomeworks:
-            #gradeHomeworks()
-            print("Not yet implemented")
+            gradeHomeworks(grade_file_name, student_files, tests, maxpoints)
+            menu_main.print_menu()
 
         elif opt == menu_main.options.CheckGradeFiles:
             checkGradeFiles(grade_file_name)
@@ -80,26 +80,6 @@ def main():
             print("You somehow got an impossible option:", opt)
 
         opt = menu_main.get_option()
-
-                
-    # For each homework file, grade it
-    last_file = len(student_files)
-    for file in student_files:
-        file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
-        file_list = os.listdir(file_dir)
-        if grade_file_name not in file_list:
-            idx = student_files.index(file) 
-            remaining = last_file - idx
-            if idx != last_file:
-                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
-                if cont:
-                    gradeHomework(file,tests,maxpoints,grade_file_name)
-                else:
-                    break
-            else:
-                print("No more homework to grade.\n")
-        else:
-            print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
 
     print("Grading session complete.")
 
@@ -182,6 +162,27 @@ def callTest(test_path, student_module):
     test = open(test_path).read()
     exec(test)
 
+
+def gradeHomeworks(grade_file_name, student_files, tests, maxpoints):
+    last_file = len(student_files)
+    for file in student_files:
+        file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
+        file_list = os.listdir(file_dir)
+        if grade_file_name not in file_list:
+            idx = student_files.index(file) 
+            remaining = last_file - idx
+            if idx != last_file:
+                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
+                if cont:
+                    gradeHomework(file,tests,maxpoints,grade_file_name)
+                else:
+                    break
+            else:
+                print("No more homework to grade.\n")
+        else:
+            print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
+
+
 # Grade a students homework
 def gradeHomework(file_path,tests,maxpoints,grade_file_name='grade.csv'):
     file_load_msg = '''
@@ -261,6 +262,7 @@ File contents:
     
 def printStudentInfo(info):
      print('\nStudent info\n------------')
+     print(info)
      print('First name: ', info['firstname'])
      print('Last name : ', info['lastname'])
      print('Moodle id : ', info['moodleid'])
