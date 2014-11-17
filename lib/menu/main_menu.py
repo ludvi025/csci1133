@@ -1,5 +1,5 @@
 from enum import Enum   # Available in Python 3.4+
-from _common import *
+from lib.menu._common import *
 
 
 
