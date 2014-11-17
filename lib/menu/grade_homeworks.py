@@ -23,17 +23,18 @@ _ShortNames = {
 }
 
 
+# 72 character limit
 _Explanations = {
     options.RunCode: 
-"""Run the homework code in a Python subprocess, optionally piping input if so \
-defined by the session file.""",
+"""Run the homework code in a Python subprocess, optionally piping input if
+so defined by the session file.""",
     options.ViewCode:
 """Print the code to the console.""",
     options.EditCode:
-"""!!UNSUPPORTED BETA OPTION!! If this feature is ever implemented, it will \
+"""!!UNSUPPORTED BETA OPTION!! If this feature is ever implemented, it will
 open an editor in order to edit the code. !!UNSUPPORTED BETA OPTION!!""",
     options.GradeCode:
-"""Enter a grade and comments for the code before saving the finished grade \
+"""Enter a grade and comments for the code before saving the finished grade
 file. Will then select the next file and enter this menu again.""",
     options.PrintHelpText:
 """Unsurprisingly, print this help text.""",

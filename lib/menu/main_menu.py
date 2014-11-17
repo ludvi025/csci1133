@@ -23,26 +23,27 @@ _ShortNames = {
 }
 
 
+# 72 character limit
 _Explanations = {
     options.GradeHomeworks: 
-"""Enter the grade homework assignment menu, after passing verification that \
-there are still homeworks that need grading.""",
+"""Enter the grade homework assignment menu, after passing verification
+that there are still homeworks that need grading.""",
     options.CheckGradeFiles:
-"""Enter the check grade files menu to cleanup any grade files corresponding \
-to unfinished or in progress grading.""",
+"""Enter the check grade files menu to cleanup any grade files
+corresponding to unfinished or in progress grading.""",
     options.GradingStatistics:
-"""Show some grading statistics. Will compute average grade, number graded per \
-grader, average grade per grader, and maybe even grading rate. Note that this \
-may be slow as it will compute the statistics upon calling and not continually \
-in the background.""",
+"""Show some grading statistics. Will compute average grade, number graded
+per grader, average grade per grader, and maybe even grading rate. Note
+that this may be slow as it will compute the statistics upon calling and
+not continually in the background.""",
     options.ConsolidateGrades:
-"""The graduate TA part of the job that consolidates all the individual grade \
-files into one large CSV.""",
+"""The graduate TA part of the job that consolidates all the individual
+grade files into one large CSV.""",
     options.PrintHelpText:
 """Unsurprisingly, print this help text.""",
     options.TerminateProgram:
-"""A way to cleanly exit the grading script. This is much preferred to mashing \
-Ctrl-C like a monkey with a bone after encountering a monolith.""",
+"""A way to cleanly exit the grading script. This is much preferred to
+mashing Ctrl-C like a monkey with a bone after encountering a monolith.""",
 }
 
 

@@ -21,16 +21,17 @@ _ShortNames = {
 }
 
 
+# 72 character limit
 _Explanations = {
     options.UnfinishedOnly: 
-"""Will find and delete any grade files that contain the phrase "Grading \
-unfinished for" in them (which would indicate that the grader killed the \
+"""Will find and delete any grade files that contain the phrase "Grading
+unfinished for" in them (which would indicate that the grader killed the
 grading script while grading a homework).""",
     options.AllIncomplete:
-"""In addition to removing the unfinished grading files, this option will also \
-remove and grade files that contain the phrase "Grading in progress for" in \
-them (which will only happen while someone is grading a file or something went \
-horribly wrong).""",
+"""In addition to removing the unfinished grading files, this option will
+also remove and grade files that contain the phrase "Grading in progress
+for" in them (which will only happen while someone is grading a file or
+something went horribly wrong).""",
     options.PrintHelpText:
 """Unsurprisingly, print this help text.""",
     options.GoToMain:
