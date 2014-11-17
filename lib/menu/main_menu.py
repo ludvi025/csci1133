@@ -58,3 +58,4 @@ def print_help_menu():
 def get_option(printmenu=False):
     if printmenu:
         print_menu()
+    return get_option_common(options)

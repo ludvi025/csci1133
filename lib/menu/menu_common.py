@@ -19,3 +19,15 @@ def print_menu_common(dec, name, optenum, options):
 
 def print_help_menu_common(name, optenum, options):
     print_menu_common('?', name, optenum, options)
+
+
+def get_option_common(optenum):
+    opt = None
+    while True:
+        try:
+            opt = int(input("Select an option: "))
+            opt = optenum(opt)
+            break
+        except:
+            print("Invalid option.")
+    return opt
