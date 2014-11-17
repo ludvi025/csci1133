@@ -43,13 +43,13 @@ file. Will then select the next file and enter this menu again.""",
 
 
 def print_menu():
-    pass
+    print_menu_common('#', 'Grade Homeworks', options, _ShortNames)
 
 
 def print_help_menu():
     pass
 
 
-def get_option():
-    pass
-
+def get_option(printmenu=False):
+    if printmenu:
+        print_menu()

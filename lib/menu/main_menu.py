@@ -47,12 +47,13 @@ Ctrl-C like a monkey with a bone after encountering a monolith.""",
 
 
 def print_menu():
-    pass
+    print_menu_common('@', 'Main Menu', options, _ShortNames)
 
 
 def print_help_menu():
     pass
 
 
-def get_option():
-    pass
+def get_option(printmenu=False):
+    if printmenu:
+        print_menu()

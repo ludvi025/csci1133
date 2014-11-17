@@ -39,12 +39,13 @@ horribly wrong).""",
 
 
 def print_menu():
-    pass
+    print_menu_common('#', 'Check Grade Files', options, _ShortNames)
 
 
 def print_help_menu():
     pass
 
 
-def get_option():
-    pass
+def get_option(printmenu=False):
+    if printmenu:
+        print_menu()
