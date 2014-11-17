@@ -4,19 +4,12 @@ from os import remove
 import lib.rfind as rfind
 
 def RemoveUnfinished(grade_file_name):
-    files_found = _cleanupIncompletes(grade_file_name, False)
-    if len(files_found) > 0:
-        print("Found and removed the following unfinished files:")
-        for fn in files_found:
-            print(fn)
+    _cleanupIncompletes(grade_file_name, False)
 
 
 def RemoveInProgress(grade_file_name):
-    files_found = _cleanupIncompletes(grade_file_name, True)
-    if len(files_found) > 0:
-        print("Found and removed the following in progress files:")
-        for fn in files_found:
-            print(fn)
+    _cleanupIncompletes(grade_file_name, True)
+
 
 
 def _cleanupIncompletes(grade_file_name, inprogress_check):
@@ -29,4 +22,12 @@ def _cleanupIncompletes(grade_file_name, inprogress_check):
             (inprogress_check and "Grading in progress for" in filetext)):
             found_files.append(fn)
             remove(fn)
-    return found_files
+    if len(found_files) > 0:
+        if inprogress_check:
+            print("Found and removed the following in progress files:")
+        else:
+            print("Found and removed the following unfinished files:")
+        for fn in found_files:
+            print(fn)
+    else:
+        print("No files to remove.")
