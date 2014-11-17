@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, imp, importlib, sys, subprocess, json, csv
+import os, imp, importlib, sys, subprocess, json, csv, signal
 
 import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
 
@@ -72,9 +72,10 @@ def main():
 
     incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
     if incomplete_check:
-        files_found = cleanupIncompletes(grade_file_name)
+        inprogress_check = get_input.yes_or_no("Check for in progress grade files?")
+        files_found = cleanupIncompletes(grade_file_name, inprogress_check)
         if len(files_found) > 0:
-            print("Found and removed the following unfinished files:")
+            print("Found and removed the following files:")
             for fn in files_found:
                 print(fn)
             print("Rerun the grading script to grade these again before consolidating.")
@@ -153,10 +154,27 @@ File contents:
 
     # --- writeFlag() ---
     fn = file_dir+'/'+grade_file_name
+
+    # Check if grade file exists (will happen when the grader dawdles too long
+    # on the Grade another? prompt)
+    if os.path.isfile(fn):
+        print("Looks like you dawdled too long on wanting to grade another.")
+        return
+
     fout = open(fn,'w')
-    fout.write('Grading unfinished for: ' + file_path)
+    fout.write('Grading in progress for: ' + file_path)
     fout.close()
     # ---
+
+    # Register a signal handler to wrap around the grading for the in progress
+    # race condition
+    original_sigint = signal.getsignal(signal.SIGINT)
+    def handler(signum, frame):
+        with open(fn,'w') as fout:
+            fout.write('Grading unfinished for: ' + file_path)
+        print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m\nGrading file {} marked as unfinished, and terminating grading script.".format(fn))
+        sys.exit()
+    signal.signal(signal.SIGINT, handler)
 
     # Load student homework module and try to run the 
     # functions that were supplied by the grader.
@@ -198,11 +216,7 @@ File contents:
     # Attempt to get student info from file path
     stud_info = getStudentInfo(file_path)
         
-    print('\nStudent info\n------------')
-    print('First name: ', stud_info['firstname'])
-    print('Last name : ', stud_info['lastname'])
-    print('Moodle id : ', stud_info['moodleid'])
-    print('------------')
+    printStudentInfo(stud_info)
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
@@ -215,8 +229,16 @@ File contents:
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
+    signal.signal(signal.SIGINT, original_sigint)
     print('Done')
     ## -- End #4 -- ##
+    
+def printStudentInfo(info):
+     print('\nStudent info\n------------')
+     print('First name: ', info['firstname'])
+     print('Last name : ', info['lastname'])
+     print('Moodle id : ', info['moodleid'])
+     print('------------')
 
 def getStudentInfo(file_path):
     return sub_parser.parse(file_path)
@@ -268,22 +290,30 @@ def loadShell(file_path):
     file_name = file_path.split(getJoinStr())[-1]
     print(file_dir, file_name)
     os.chdir(file_dir)
+    # Store the original handler and set a new one
+    original_sigint = signal.getsignal(signal.SIGINT)
+    def handler(signum, frame):
+        print("\n\033[91mLooks like you pushed Ctrl-C. Handler removed.\033[0m")
+        signal.signal(signal.SIGINT, original_sigint)
+    signal.signal(signal.SIGINT, handler)
+    # Call the student code
     subprocess.call([sys.executable,'-i',file_name])
+    # Restore the handler
+    signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
 
-def cleanupIncompletes(grade_file_name):
+
+def cleanupIncompletes(grade_file_name, inprogress_check):
     files = rfind.find(grade_file_name, '.')
     found_files = []
     for fn in files:
         with open(fn, 'r') as f:
-            if "Grading unfinished for" in f.read():
-                found_files.append(fn)
-                f.close()
-                os.remove(fn)
+            filetext = f.read()
+        if ("Grading unfinished for" in filetext or
+            (inprogress_check and "Grading in progress for" in filetext)):
+            found_files.append(fn)
+            os.remove(fn)
     return found_files
-
-def ctrlc_handler(signal, frame):
-     print('You forced the grading script to quit...\nCleaning up and deleting any temporary grade files.')
 
 
 if __name__ == "__main__":
