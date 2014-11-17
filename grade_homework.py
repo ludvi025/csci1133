@@ -203,11 +203,7 @@ File contents:
     # Attempt to get student info from file path
     stud_info = getStudentInfo(file_path)
         
-    print('\nStudent info\n------------')
-    print('First name: ', stud_info['firstname'])
-    print('Last name : ', stud_info['lastname'])
-    print('Moodle id : ', stud_info['moodleid'])
-    print('------------')
+    printStudentInfo(stud_info)
             
     print('\n----------------------------------')
     grade = get_input.grade(maxpoints)
@@ -222,6 +218,13 @@ File contents:
                             stud_info['lastname'], grade, comments, os.getlogin()])
     signal.signal(signal.SIGINT, original_sigint)
     print('Done')
+    
+def printStudentInfo(info):
+     print('\nStudent info\n------------')
+     print('First name: ', info['firstname'])
+     print('Last name : ', info['lastname'])
+     print('Moodle id : ', info['moodleid'])
+     print('------------')
 
 def getStudentInfo(file_path):
     return sub_parser.parse(file_path)
