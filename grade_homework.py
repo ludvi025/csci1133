@@ -204,35 +204,28 @@ def gradeHomework(file_path,tests,maxpoints,grade_file_name='grade.csv'):
     fout.write('Grading in progress for: ' + file_path)
     fout.close()
 
-    # Register a signal handler to wrap around the grading for the in progress
-    # race condition
-    original_sigint = signal.getsignal(signal.SIGINT)
-    def handler(signum, frame):
-        with open(fn,'w') as fout:
-            fout.write('Grading unfinished for: ' + file_path)
-        print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m\nGrading file {} marked as unfinished, and terminating grading script.".format(fn))
-        sys.exit()
-    signal.signal(signal.SIGINT, handler)
-
+    grade_entered = False
     menu_grade.print_menu()
     opt = menu_grade.get_option()
-    while opt != menu_grade.GoToMain:
+    while opt != menu_grade.options.NextHomework or not grade_entered:
         if opt == menu_grade.options.RunTests:
             if tests:
                 runTests(tests, file_path)
             else:
                 print("Brah, you didn't give me any tests to run whatchu `spect me ta do?")
+
         elif opt == menu_grade.options.RunShell:
-            runShell(stud_info, maxpoints, fn)
+            runShell(file_path)
 
         elif opt == menu_grade.options.ViewCode:
             printCode(file_path)
 
         elif opt == menu_grade.options.GradeCode:
             enterGrade(stud_info, maxpoints, fn)
+            grade_entered = True
 
         else:
-            print("Man, I don't what that means!")
+            print("Man, you gotta enter a grade first...")
 
         menu_grade.print_menu()
         opt = menu_grade.get_option()
@@ -250,12 +243,11 @@ def enterGrade(stud_info, maxpoints, fn):
         writer = csv.writer(csvfile)
         writer.writerow([stud_info['moodleid'], stud_info['firstname'],
                             stud_info['lastname'], grade, comments, os.getlogin()])
-    signal.signal(signal.SIGINT, original_sigint)
     print('Done')
     
 def printStudentInfo(info):
      print('\nStudent info\n------------')
-     print(info)
+     #print(info)
      print('First name: ', info['firstname'])
      print('Last name : ', info['lastname'])
      print('Moodle id : ', info['moodleid'])
@@ -263,6 +255,21 @@ def printStudentInfo(info):
 
 def getStudentInfo(file_path):
     return sub_parser.parse(file_path)
+
+def setCustomCtrlCHandler():
+    # Register a signal handler to wrap around the grading for the in progress
+    # race condition
+    original_sigint = signal.getsignal(signal.SIGINT)
+    def handler(signum, frame):
+        with open(fn,'w') as fout:
+            fout.write('Grading unfinished for: ' + file_path)
+        print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m\nGrading file {} marked as unfinished, and terminating grading script.".format(fn))
+        sys.exit()
+    signal.signal(signal.SIGINT, handler)
+    return original_sigint
+
+def resetCtrlCHandler(original_sigint):
+    signal.signal(signal.SIGINT, original_sigint)
 
 def runTests(tests, file_path):
     mod_load_msg = '''
@@ -272,6 +279,8 @@ Loading module and calling supplied tests
 ----Module Load Output----
 '''
     print(mod_load_msg)
+
+    original = setCustomCtrlCHandler() 
     mod_load_error = False
     for test in tests:
         out, err = run_with_input.runInteractive(file_path, open(test).read())
@@ -285,11 +294,15 @@ Loading module and calling supplied tests
             print('Errors from', test, '\n------')
             print(err)
         print()
+    resetCtrlCHandler(original)
 
 def runShell(file_path):
+    original = setCustomCtrlCHandler() 
+    play_again = True
     while play_again: 
         loadShell(file_path)
         play_again = get_input.yes_or_no('Reload module?')
+    resetCtrlCHandler(original)
 
 def loadShell(file_path):
     current_dir = os.getcwd()

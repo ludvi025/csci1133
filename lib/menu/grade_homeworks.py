@@ -11,7 +11,7 @@ class options(Enum):
     #EditCode        = 3 #BETA
     GradeCode       = 4
     PrintHelpText   = 5
-    GoToMain        = 6
+    NextHomework    = 6
 
 
 _ShortNames = {
@@ -21,7 +21,7 @@ _ShortNames = {
     #options.EditCode:     "BETA BETA edit the code BETA BETA",
     options.GradeCode:    "Enter grades for the code",
     options.PrintHelpText:"Print help text",
-    options.GoToMain:     "Go to the main menu",
+    options.NextHomework: "Next homework"
 }
 
 
@@ -43,8 +43,8 @@ return to script. Hint: Call `dir()` to see what's available.""",
 file. Will then select the next file and enter this menu again.""",
     options.PrintHelpText:
 """Unsurprisingly, print this help text.""",
-    options.GoToMain:
-"""Go back to the main menu.""",
+    options.NextHomework:
+"""Uhm... grade the next homework..."""
 }
 
 
