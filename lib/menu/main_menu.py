@@ -1,5 +1,5 @@
 from enum import Enum   # Available in Python 3.4+
-from menu_common import *
+from lib.menu._common import *
 
 
 
@@ -23,36 +23,43 @@ _ShortNames = {
 }
 
 
+# 72 character limit
 _Explanations = {
     options.GradeHomeworks: 
-"""Enter the grade homework assignment menu, after passing verification that \
-there are still homeworks that need grading.""",
+"""Enter the grade homework assignment menu, after passing verification
+that there are still homeworks that need grading.""",
     options.CheckGradeFiles:
-"""Enter the check grade files menu to cleanup any grade files corresponding \
-to unfinished or in progress grading.""",
+"""Enter the check grade files menu to cleanup any grade files
+corresponding to unfinished or in progress grading.""",
     options.GradingStatistics:
-"""Show some grading statistics. Will compute average grade, number graded per \
-grader, average grade per grader, and maybe even grading rate. Note that this \
-may be slow as it will compute the statistics upon calling and not continually \
-in the background.""",
+"""Show some grading statistics. Will compute average grade, number graded
+per grader, average grade per grader, and maybe even grading rate. Note
+that this may be slow as it will compute the statistics upon calling and
+not continually in the background.""",
     options.ConsolidateGrades:
-"""The graduate TA part of the job that consolidates all the individual grade \
-files into one large CSV.""",
+"""The graduate TA part of the job that consolidates all the individual
+grade files into one large CSV.""",
     options.PrintHelpText:
 """Unsurprisingly, print this help text.""",
     options.TerminateProgram:
-"""A way to cleanly exit the grading script. This is much preferred to mashing \
-Ctrl-C like a monkey with a bone after encountering a monolith.""",
+"""A way to cleanly exit the grading script. This is much preferred to
+mashing Ctrl-C like a monkey with a bone after encountering a monolith.""",
 }
 
 
 def print_menu():
-    pass
+    common_print_menu('@', 'Main Menu', options, _ShortNames)
 
 
 def print_help_menu():
-    pass
+    common_print_help_menu('Main Menu Extended Help', options, _Explanations)
 
 
-def get_option():
-    pass
+def get_option(printmenu=False):
+    if printmenu:
+        print_menu()
+    opt = common_get_option(options)
+    while opt == options.PrintHelpText:
+        print_help_menu()
+        opt = common_get_option(options)
+    return opt
