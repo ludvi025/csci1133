@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 import os, imp, importlib, sys, subprocess, json, csv, signal
 
-import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.stdin_pipe.run_with_input as run_with_input, lib.get_input as get_input, lib.version as version
+import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.get_input as get_input, lib.version as version
+import lib.stdin_pipe.run_with_input as run_with_input
+import lib.menu.main_menu as menu_main, lib.menu.grade_homeworks as menu_grade, lib.menu.check_grade_files as menu_cleanup
+import lib.grade_files.cleanup as grade_file_cleanup
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -44,6 +47,7 @@ def main():
     else:
         grade_file_name = 'grade.csv'
 
+    # Get the list of student files to grade
     student_files = []
     for pattern in patterns:
         files = rfind.find(pattern,'.',IGNORE)
@@ -51,36 +55,52 @@ def main():
             if f not in student_files:
                 student_files.append(f)
 
-    # For each homework file, grade it
-    last_file = len(student_files)
-    for file in student_files:
-        file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
-        file_list = os.listdir(file_dir)
-        if grade_file_name not in file_list:
-            idx = student_files.index(file) 
-            remaining = last_file - idx
-            if idx != last_file:
-                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
-                if cont:
-                    gradeHomework(file,tests,maxpoints,grade_file_name)
-                else:
-                    break
-            else:
-                print("No more homework to grade.\n")
-        else:
-            print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
+    # Main menu
+    menu_main.print_menu()
+    opt = menu_main.get_option()
+    while opt != menu_main.options.TerminateProgram:
 
-    incomplete_check = get_input.yes_or_no("Check for incomplete grade files?")
-    if incomplete_check:
-        inprogress_check = get_input.yes_or_no("Check for in progress grade files?")
-        files_found = cleanupIncompletes(grade_file_name, inprogress_check)
-        if len(files_found) > 0:
-            print("Found and removed the following files:")
-            for fn in files_found:
-                print(fn)
-            print("Rerun the grading script to grade these again before consolidating.")
+        if opt == menu_main.options.GradeHomeworks:
+            gradeHomeworks(grade_file_name, student_files, tests, maxpoints)
+            menu_main.print_menu()
+
+        elif opt == menu_main.options.CheckGradeFiles:
+            checkGradeFiles(grade_file_name)
+            menu_main.print_menu()
+
+        elif opt == menu_main.options.GradingStatistics:
+            #printStatistics()
+            print("Not yet implemented")
+
+        elif opt == menu_main.options.ConsolidateGrades:
+            #consolidateGradeFiles()
+            print("Not yet implemented")
+
+        else:
+            print("You somehow got an impossible option:", opt)
+
+        opt = menu_main.get_option()
 
     print("Grading session complete.")
+
+
+def checkGradeFiles(grade_file_name):
+    menu_cleanup.print_menu()
+    opt = menu_cleanup.get_option()
+
+    while opt != menu_cleanup.options.GoToMain:
+
+        if opt == menu_cleanup.options.UnfinishedOnly:
+            grade_file_cleanup.RemoveUnfinished(grade_file_name)
+
+        elif opt == menu_cleanup.options.InProgressOnly:
+            grade_file_cleanup.RemoveInProgress(grade_file_name)
+
+        else:
+            print("You somehow got an impossible option.")
+
+        opt = menu_cleanup.get_option()
+
 
 def getSession(name):
     file_name = name+'.session'
@@ -141,6 +161,27 @@ def callFunction(foo, mod):
 def callTest(test_path, student_module):
     test = open(test_path).read()
     exec(test)
+
+
+def gradeHomeworks(grade_file_name, student_files, tests, maxpoints):
+    last_file = len(student_files)
+    for file in student_files:
+        file_dir = getJoinStr().join(file.split(getJoinStr())[:-1])
+        file_list = os.listdir(file_dir)
+        if grade_file_name not in file_list:
+            idx = student_files.index(file) 
+            remaining = last_file - idx
+            if idx != last_file:
+                cont = get_input.yes_or_no(str(remaining) + " files remaining... Grade another?")
+                if cont:
+                    gradeHomework(file,tests,maxpoints,grade_file_name)
+                else:
+                    break
+            else:
+                print("No more homework to grade.\n")
+        else:
+            print('Skipping',file, 'because "'+grade_file_name+'" already exists.')
+
 
 # Grade a students homework
 def gradeHomework(file_path,tests,maxpoints,grade_file_name='grade.csv'):
@@ -221,6 +262,7 @@ File contents:
     
 def printStudentInfo(info):
      print('\nStudent info\n------------')
+     print(info)
      print('First name: ', info['firstname'])
      print('Last name : ', info['lastname'])
      print('Moodle id : ', info['moodleid'])
@@ -287,19 +329,6 @@ def loadShell(file_path):
     # Restore the handler
     signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
-
-
-def cleanupIncompletes(grade_file_name, inprogress_check):
-    files = rfind.find(grade_file_name, '.')
-    found_files = []
-    for fn in files:
-        with open(fn, 'r') as f:
-            filetext = f.read()
-        if ("Grading unfinished for" in filetext or
-            (inprogress_check and "Grading in progress for" in filetext)):
-            found_files.append(fn)
-            os.remove(fn)
-    return found_files
 
 
 if __name__ == "__main__":
