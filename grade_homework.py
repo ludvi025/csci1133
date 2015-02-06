@@ -126,7 +126,9 @@ def getJoinStr():
     return os.path.join('.','.')[1:-1]
 
 # Returns a module object for the filename passed
+# DEPRECATED
 def importScript(rel_path):
+
     root = os.getcwd()
     join_str = getJoinStr()
 
@@ -162,7 +164,6 @@ def callTest(test_path, student_module):
     test = open(test_path).read()
     exec(test)
 
-
 def gradeHomeworks(grade_file_name, student_files, tests, maxpoints):
     last_file = len(student_files)
     for file in student_files:
@@ -185,11 +186,9 @@ def gradeHomeworks(grade_file_name, student_files, tests, maxpoints):
 
 # Grade a students homework
 def gradeHomework(file_path,tests,maxpoints,grade_file_name='grade.csv'):
-    file_load_msg = '''
---------------
-File contents:
---------------
-'''
+    # Attempt to get student info from file path
+    stud_info = getStudentInfo(file_path)
+
     file_dir = getJoinStr().join(file_path.split(getJoinStr())[:-1])
     file_list = os.listdir(file_dir)
 
@@ -205,6 +204,59 @@ File contents:
     fout.write('Grading in progress for: ' + file_path)
     fout.close()
 
+    grade_entered = False
+    menu_grade.print_menu()
+    opt = menu_grade.get_option()
+    while opt != menu_grade.options.NextHomework or not grade_entered:
+        if opt == menu_grade.options.RunTests:
+            if tests:
+                runTests(tests, file_path)
+            else:
+                print("Brah, you didn't give me any tests to run whatchu `spect me ta do?")
+
+        elif opt == menu_grade.options.RunShell:
+            runShell(file_path)
+
+        elif opt == menu_grade.options.ViewCode:
+            printCode(file_path)
+
+        elif opt == menu_grade.options.GradeCode:
+            enterGrade(stud_info, maxpoints, fn)
+            grade_entered = True
+
+        else:
+            print("Man, you gotta enter a grade first...")
+
+        menu_grade.print_menu()
+        opt = menu_grade.get_option()
+
+def enterGrade(stud_info, maxpoints, fn):
+    printStudentInfo(stud_info)
+            
+    print('\n----------------------------------')
+    grade = get_input.grade(maxpoints)
+    comments = str(input('Enter comments: ')).strip('\\')
+    print('----------------------------------')
+
+    print('Writing to file...',end='')
+    with open(fn, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([stud_info['moodleid'], stud_info['firstname'],
+                            stud_info['lastname'], grade, comments, os.getlogin()])
+    print('Done')
+    
+def printStudentInfo(info):
+     print('\nStudent info\n------------')
+     #print(info)
+     print('First name: ', info['firstname'])
+     print('Last name : ', info['lastname'])
+     print('Moodle id : ', info['moodleid'])
+     print('------------')
+
+def getStudentInfo(file_path):
+    return sub_parser.parse(file_path)
+
+def setCustomCtrlCHandler():
     # Register a signal handler to wrap around the grading for the in progress
     # race condition
     original_sigint = signal.getsignal(signal.SIGINT)
@@ -214,62 +266,10 @@ File contents:
         print("\n\033[91mLooks like you pushed Ctrl-C.\033[0m\nGrading file {} marked as unfinished, and terminating grading script.".format(fn))
         sys.exit()
     signal.signal(signal.SIGINT, handler)
+    return original_sigint
 
-    # Load student homework module and try to run the 
-    # functions that were supplied by the grader.
-    file_name = file_path.split(getJoinStr())[-1]
-
-    # We can pipe the lines of a script to a subprocess
-    # running their script.
-    sending_input = False
-    if sending_input:
-        pass
-    else:
-        runTests(tests, file_path)
-
-    # Display the contents of the student's homework file
-    # for manual inspection and partial credit. Displays 
-    # with line numbers for easy reference.
-    print(file_load_msg)
-
-    fin = open(file_path,'r')
-    contents = fin.readlines()
-    fin.close()
-
-    for i in range(len(contents)):
-        print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
-    print('\n')
-    print('\nFile: ',file_path)
-
-    # Attempt to get student info from file path
-    stud_info = getStudentInfo(file_path)
-        
-    printStudentInfo(stud_info)
-            
-    print('\n----------------------------------')
-    grade = get_input.grade(maxpoints)
-    comments = str(input('Enter comments: ')).strip('\\')
-    print('----------------------------------')
-
-    print('Writing to file...',end='')
-    fn = file_dir+'/'+grade_file_name
-    with open(fn, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow([stud_info['moodleid'], stud_info['firstname'],
-                            stud_info['lastname'], grade, comments, os.getlogin()])
+def resetCtrlCHandler(original_sigint):
     signal.signal(signal.SIGINT, original_sigint)
-    print('Done')
-    
-def printStudentInfo(info):
-     print('\nStudent info\n------------')
-     print(info)
-     print('First name: ', info['firstname'])
-     print('Last name : ', info['lastname'])
-     print('Moodle id : ', info['moodleid'])
-     print('------------')
-
-def getStudentInfo(file_path):
-    return sub_parser.parse(file_path)
 
 def runTests(tests, file_path):
     mod_load_msg = '''
@@ -279,38 +279,30 @@ Loading module and calling supplied tests
 ----Module Load Output----
 '''
     print(mod_load_msg)
+
+    original = setCustomCtrlCHandler() 
     mod_load_error = False
-    if tests:
-        for test in tests:
-            out, err = run_with_input.runInteractive(file_path, open(test).read())
-            if out:
-                out = out.replace('>>>','\n').replace('...','\n')
-            if err:
-                err = err.replace('>>>','\n').replace('...','\n')
-            print('Output from', test, '\n------')
-            print(out)
-            if not err.replace('\n','').replace(' ','')=='':
-                print('Errors from', test, '\n------')
-                print(err)
-            print()
+    for test in tests:
+        out, err = run_with_input.runInteractive(file_path, open(test).read())
+        if out:
+            out = out.replace('>>>','\n').replace('...','\n')
+        if err:
+            err = err.replace('>>>','\n').replace('...','\n')
+        print('Output from', test, '\n------')
+        print(out)
+        if not err.replace('\n','').replace(' ','')=='':
+            print('Errors from', test, '\n------')
+            print(err)
+        print()
+    resetCtrlCHandler(original)
 
-        play_again = get_input.yes_or_no('Load interactive python shell?')
-
-    else:
-        play_again = True
-
-    if play_again:
-        print('\n-----')
-        print('Loading student module in separate instance of python.')
-        print('Press Ctrl+D to return to grading script when finished.')
-        print('Hint: If the student does not call their function, type')
-        print('run the function dir() at the python prompt to see what')
-        print('it\'s called.')
-        print('-----\n')
-
+def runShell(file_path):
+    original = setCustomCtrlCHandler() 
+    play_again = True
     while play_again: 
         loadShell(file_path)
         play_again = get_input.yes_or_no('Reload module?')
+    resetCtrlCHandler(original)
 
 def loadShell(file_path):
     current_dir = os.getcwd()
@@ -329,6 +321,27 @@ def loadShell(file_path):
     # Restore the handler
     signal.signal(signal.SIGINT, original_sigint)
     os.chdir(current_dir)
+
+def printCode(file_path):
+    # Display the contents of the student's homework file
+    # for manual inspection and partial credit. Displays 
+    # with line numbers for easy reference.
+
+    file_load_msg = '''
+--------------
+File contents:
+--------------
+'''
+    print(file_load_msg)
+
+    fin = open(file_path,'r')
+    contents = fin.readlines()
+    fin.close()
+
+    for i in range(len(contents)):
+        print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
+    print('\n')
+    print('\nFile: ',file_path)
 
 
 if __name__ == "__main__":
