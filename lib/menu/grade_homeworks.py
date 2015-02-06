@@ -21,7 +21,7 @@ _ShortNames = {
     #options.EditCode:     "BETA BETA edit the code BETA BETA",
     options.GradeCode:    "Enter grades for the code",
     options.PrintHelpText:"Print help text",
-    options.NextHomework: "Next homework"
+    options.NextHomework: "Continue / Main Menu"
 }
 
 
