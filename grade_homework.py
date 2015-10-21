@@ -5,6 +5,7 @@ import lib.rfind as rfind, lib.sub_parser as sub_parser, lib.art as art, lib.get
 import lib.stdin_pipe.run_with_input as run_with_input
 import lib.menu.main_menu as menu_main, lib.menu.grade_homeworks as menu_grade, lib.menu.check_grade_files as menu_cleanup
 import lib.grade_files.cleanup as grade_file_cleanup
+import lib.syntaxhi
 
 # TODO :
 # Add comment about how python subprocess gets module
@@ -328,21 +329,28 @@ def printCode(file_path):
     # with line numbers for easy reference.
 
     file_load_msg = '''
---------------
-File contents:
---------------
-'''
+    --------------
+    File contents:
+    --------------
+    '''
+    # Check to see if we're running linux (syntax highlighting only supports Linux terminals)
+    linux = (os.name == "posix")
+        
     print(file_load_msg)
 
     fin = open(file_path,'r')
     contents = fin.readlines()
     fin.close()
-
+    
+    # Print out the code line-by-line
     for i in range(len(contents)):
-        print(str(i+1).rjust(4,'_'),': ', contents[i], end='')
+        if linux:
+            print(str(i+1).rjust(4,'_'),': ', syntaxhi.color_line(contents[i]), end = '')
+        else:
+            print(str(i+1).rjust(4,'_'),': ', contents[i], end = '')
+        
     print('\n')
     print('\nFile: ',file_path)
-
 
 if __name__ == "__main__":
     main()
